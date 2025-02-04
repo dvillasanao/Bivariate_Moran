@@ -1,6 +1,6 @@
 ---
 title: "Bivariate Moran Index"
-subtitle: "Análisis espacial"
+subtitle: "Análisis espacial utilizando Índice de Calidad del Entorno (ICE)"
 author: "Diana Villasana Ocampo"
 knit: (function(inputFile, encoding) {
        rmarkdown::render(inputFile, encoding = encoding, output_dir = "../Output/")
@@ -96,8 +96,75 @@ h3 {
 </style>
 ```
 
-## Objetivo 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = TRUE, 
+                      cache.lazy = FALSE, class.source = "fold-show")
+knitr::opts_knit$set(root.dir = here::here())
+setwd(here::here())
+```
 
+```{r,echo=FALSE, eval=FALSE}
+rm(list = ls())
+```
+
+```{r, echo = FALSE, results=FALSE}
+# Paquetes que se usaron en el documento 
+require(dplyr)          #A Grammar of Data Manipulation 
+require(ggplot2)        # Generar gráficos ggplot y la geometría de un mapa
+require(RColorBrewer)
+require(ggspatial)
+require(ggpubr)
+require(knitr)
+require(kableExtra)
+require(openxlsx)
+require(readxl)
+require(rgdal)          #Para importar shapefiles. 
+require(sp)             # Classes and Methos for Spatial Data
+library(spdep)    # Índice de Moran 
+require(spdplyr)        #Data manipulation verbs for the sptial classes
+require(tidyverse) 
+require(unikn)          # Paleta de colores
+```
+
+```{r, echo = FALSE, results=FALSE}
+# Se descargan las fuentes de la google fonts
+require(showtext)
+# activar showtext
+showtext_auto()
+font_add_google("Montserrat", "montserrat")
+```
+
+
+## Objetivo   
+
+El análisis espacial con el Índice de Calidad del Entorno (ICE) es una herramienta fundamental que permite comprender la distribución de la calidad del entorno en un territorio específico e identificar patrones geográficos de carencias y desigualdades. Este análisis facilita la visualización en mapas de la distribución del ICE, permitiendo identificar áreas con mayores necesidades y mejores condiciones. También ayuda a determinar zonas prioritarias para intervenciones de políticas públicas, analiza las relaciones entre diferentes factores del ICE (marginación, equipamiento, conectividad) y otras variables geográficas, permite comparar la calidad del entorno entre diferentes áreas geográficas, y facilita el monitoreo de cambios a lo largo del tiempo para evaluar el impacto de las políticas públicas implementadas.
+
+## Índice de Calidad del Entorno
+
+El **Índice de Calidad del Entorno (ICE)**, desarrollado por el Consejo Nacional de Población (CONAPO), es un indicador compuesto que busca medir las características de los asentamientos humanos en México, tomando en cuenta factores como la marginación, la disponibilidad de servicios y equipamiento urbano. Su objetivo principal es ofrecer información que sintetice los factores contextuales negativos que limitan la participación e inclusión de las personas, especialmente aquellas con discapacidad.  
+
+**Dimensiones del ICE:**
+  
+  El ICE se estructura en tres dimensiones principales:
+  
+  1.  **Dimensión sociodemográfica:** Esta dimensión se basa en indicadores socioeconómicos de los índices de marginación, como el porcentaje de población en pobreza, el nivel de educación, entre otros.
+2.  **Dimensión de equipamiento:** Analiza la disponibilidad de equipamiento y servicios públicos y privados, como escuelas, hospitales, parques, etc.
+3.  **Dimensión de conectividad:** Evalúa la calidad de la infraestructura de transporte y comunicaciones, así como el acceso a internet y otros servicios.
+
+El ICE es una herramienta útil para:
+  
+-  **Identificar áreas con mayores carencias:** Permite identificar las zonas donde se concentran los factores que limitan la calidad del entorno, lo que puede ser útil para la toma de decisiones en políticas públicas.
+- **Evaluar el impacto de políticas públicas:** El ICE puede ser utilizado para evaluar el impacto de programas y políticas públicas en la calidad del entorno.
+- **Promover la inclusión:** Al visibilizar los factores que limitan la inclusión de las personas, el ICE puede contribuir a la promoción de políticas que mejoren la calidad de vida de todos los ciudadanos.
+
+**Limitaciones del ICE:**
+  
+  Es importante tener en cuenta que el ICE tiene algunas limitaciones:
+  
+-  **Disponibilidad de información:** La disponibilidad de información para calcular el ICE puede ser limitada en algunas zonas.
+-  **Complejidad del fenómeno:** La calidad del entorno es un fenómeno complejo que no puede ser abarcado en su totalidad por un solo indicador.
+ 
+ 
 ## Análisis espacial  
 
 ## Correlaciones espaciales
@@ -127,4 +194,65 @@ Este método identifica zonas de altas y bajas correlaciones espaciales entre do
 ### 4. Geary's C Bivariado
 Detecta autocorrelación espacial, pero con más sensibilidad a diferencias locales.
 
+#### Shapefile
+
+La función `readOGR` del paquete `rgdal`, extrae automáticamente la información utilizada por otros paquetes `SIG` de código abierto como QGIS y permite a R manejar una gama más amplia de formatos de datos espaciales. Esta función lee datos `OGR` y datos vectoriales, pero solamente permite manejar capas con características geométricas (no mezcla puntos, líneas o polígonos en una sola capa) y a su vez establecerá un sistema de referencia espacial si la capa tiene dichos metadatos.\
+Para leer un archivo `shapefile`, se establecen los siguientes argumentos, como `dsn`, en donde se indica el directorio que contiene los shapes y `layer` que es el nombre explícito de la capa a trabajar y dichas capas deben de ir sin la extensión `.shp`.
+
+A continuación, se lee el archivo .shp que contiene de manera integrada la división de el área geoestadística municipal `agem`.
+
+```{r,results=FALSE,class.source = "fold-show"}
+shape_estados <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
+                             layer = "00ent",
+                              encoding = "UTF-8",
+                               use_iconv = TRUE)
+```
+
+```{r,results=FALSE,class.source = "fold-show"}
+shape_municipios <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
+                             layer = "00mun",
+                              encoding = "UTF-8",
+                               use_iconv = TRUE)
+```
+
+La función `rename()` del paquete `dplyr` permite cambiar el nombre de la columna de la clave geoestadística a nivel estatal dentro de la base de datos del shape.
+
+```{r,class.source = "fold-show"}
+shape_municipios@data <- shape_municipios@data %>%
+                          rename("CVE_GEO" = "CVEGEO")
+```
+
+
+### Base de datos
+
+La base de datos del índice de calidad del entorno por municipios se encuentra disponible en la página oficial de [CONAPO](https://www.gob.mx/conapo/documentos/indice-de-calidad-del-entorno?idiom=es) o bien se puede consultar en la página de [Datos Abiertos](https://datos.gob.mx/) y se presenta en formato `.xlsx` [Consulta](http://www.conapo.gob.mx/work/models/CONAPO/Datos_Abiertos/DT/ICE_2020.zip).
+
+
+```{r, class.source = "fold-show"}
+data <- read_xlsx("Bases/Indice de calidad del entorno a nivel municipal.xlsx", sheet = "ICE_2020") %>%
+          mutate(CVE_GEO = CVE_MUN) %>%
+           as.data.frame()
+```
+
+## Referencias 
+
+Anselin, L. (1995). Local Indicators of Spatial Association—LISA. Geographical Analysis, 27(2), 93–115.
+
+Global Spatial Autocorrelation (2). (2019). Retrieved February 3, 2025, from https://geodacenter.github.io/workbook/5b_global_adv/lab5b.html 
+
+## Librerías
+
+**Librerías que se usaron en el trabajo** 
+
+```{r, collapse=FALSE}
+sesion_info <- devtools::session_info()
+```
+
+```{r, echo = FALSE}
+kable(dplyr::select(tibble::as_tibble(sesion_info$packages %>% dplyr::filter(attached == TRUE)),
+                    c(package, loadedversion, source))) %>%
+   kable_classic(full_width = TRUE, html_font = "montserrat", font_size = 10) 
+```
+
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img src="https://i.creativecommons.org/l/by/4.0/88x31.png" alt="Creative Commons Licence" style="border-width:0"/></a><br />This work by [**Diana Villasana Ocampo**]{xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName"} is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 

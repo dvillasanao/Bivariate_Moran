@@ -1371,6 +1371,230 @@ window.initializeCodeFolding = function(show) {
 
 }
 </script>
+<script>$(document).ready(function(){
+    if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+    if ($('[data-toggle="popover"]').popover === 'function') {
+        $('[data-toggle="popover"]').popover();
+    }
+});
+</script>
+<style type="text/css">
+.lightable-minimal {
+border-collapse: separate;
+border-spacing: 16px 1px;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-minimal td {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal th {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal thead tr:last-child th {
+border-bottom: 2px solid #00000050;
+empty-cells: hide;
+}
+.lightable-minimal tbody tr:first-child td {
+padding-top: 0.5em;
+}
+.lightable-minimal.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-minimal.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic {
+border-top: 0.16em solid #111111;
+border-bottom: 0.16em solid #111111;
+width: 100%;
+margin-bottom: 10px;
+margin: 10px 5px;
+}
+.lightable-classic tfoot tr td {
+border: 0;
+}
+.lightable-classic tfoot tr:first-child td {
+border-top: 0.14em solid #111111;
+}
+.lightable-classic caption {
+color: #222222;
+}
+.lightable-classic td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic thead tr:last-child th {
+border-bottom: 0.10em solid #111111;
+}
+.lightable-classic.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic-2 {
+border-top: 3px double #111111;
+border-bottom: 3px double #111111;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-classic-2 tfoot tr td {
+border: 0;
+}
+.lightable-classic-2 tfoot tr:first-child td {
+border-top: 3px double #111111;
+}
+.lightable-classic-2 caption {
+color: #222222;
+}
+.lightable-classic-2 td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic-2 th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic-2 tbody tr:last-child td {
+border-bottom: 3px double #111111;
+}
+.lightable-classic-2 thead tr:last-child th {
+border-bottom: 1px solid #111111;
+}
+.lightable-classic-2.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic-2.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #EEE;
+border-collapse: collapse;
+margin-bottom: 10px;
+}
+.lightable-material tfoot tr td {
+border: 0;
+}
+.lightable-material tfoot tr:first-child td {
+border-top: 1px solid #EEE;
+}
+.lightable-material th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+}
+.lightable-material td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+border-top: 1px solid #eeeeee;
+}
+.lightable-material.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #ddd;
+}
+.lightable-material-dark {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #FFFFFF12;
+border-collapse: collapse;
+margin-bottom: 10px;
+background-color: #363640;
+}
+.lightable-material-dark tfoot tr td {
+border: 0;
+}
+.lightable-material-dark tfoot tr:first-child td {
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF60;
+}
+.lightable-material-dark td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF;
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark.lightable-hover tbody tr:hover {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody tr:nth-child(even) {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material-dark.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #FFFFFF12;
+}
+.lightable-paper {
+width: 100%;
+margin-bottom: 10px;
+color: #444;
+}
+.lightable-paper tfoot tr td {
+border: 0;
+}
+.lightable-paper tfoot tr:first-child td {
+border-top: 1px solid #00000020;
+}
+.lightable-paper thead tr:last-child th {
+color: #666;
+vertical-align: bottom;
+border-bottom: 1px solid #00000020;
+line-height: 1.15em;
+padding: 10px 5px;
+}
+.lightable-paper td {
+vertical-align: middle;
+border-bottom: 1px solid #00000010;
+line-height: 1.15em;
+padding: 7px 5px;
+}
+.lightable-paper.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-paper.lightable-striped tbody tr:nth-child(even) {
+background-color: #00000008;
+}
+.lightable-paper.lightable-striped tbody td {
+border: 0;
+}
+</style>
 
 <style type="text/css">
 code{white-space: pre-wrap;}
@@ -1383,6 +1607,115 @@ ul.task-list{list-style: none;}
 
 
 
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } 
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.at { color: #204a87; } 
+code span.bn { color: #0000cf; } 
+code span.cf { color: #204a87; font-weight: bold; } 
+code span.ch { color: #4e9a06; } 
+code span.cn { color: #8f5902; } 
+code span.co { color: #8f5902; font-style: italic; } 
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.dt { color: #204a87; } 
+code span.dv { color: #0000cf; } 
+code span.er { color: #a40000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #0000cf; } 
+code span.fu { color: #204a87; font-weight: bold; } 
+code span.im { } 
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.kw { color: #204a87; font-weight: bold; } 
+code span.op { color: #ce5c00; font-weight: bold; } 
+code span.ot { color: #8f5902; } 
+code span.pp { color: #8f5902; font-style: italic; } 
+code span.sc { color: #ce5c00; font-weight: bold; } 
+code span.ss { color: #4e9a06; } 
+code span.st { color: #4e9a06; } 
+code span.va { color: #000000; } 
+code span.vs { color: #4e9a06; } 
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
+.sourceCode .row {
+width: 100%;
+}
+.sourceCode {
+overflow-x: auto;
+}
+.code-folding-btn {
+margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -1556,7 +1889,8 @@ border-radius: 0px;
 
 
 <h1 class="title toc-ignore">Bivariate Moran Index</h1>
-<h3 class="subtitle">Análisis espacial</h3>
+<h3 class="subtitle">Análisis espacial utilizando Índice de Calidad del
+Entorno (ICE)</h3>
 <h4 class="author">Diana Villasana Ocampo</h4>
 
 </div>
@@ -1629,6 +1963,68 @@ color: #1e42ab;
 </style>
 <div id="objetivo" class="section level2">
 <h2>Objetivo</h2>
+<p>El análisis espacial con el Índice de Calidad del Entorno (ICE) es
+una herramienta fundamental que permite comprender la distribución de la
+calidad del entorno en un territorio específico e identificar patrones
+geográficos de carencias y desigualdades. Este análisis facilita la
+visualización en mapas de la distribución del ICE, permitiendo
+identificar áreas con mayores necesidades y mejores condiciones. También
+ayuda a determinar zonas prioritarias para intervenciones de políticas
+públicas, analiza las relaciones entre diferentes factores del ICE
+(marginación, equipamiento, conectividad) y otras variables geográficas,
+permite comparar la calidad del entorno entre diferentes áreas
+geográficas, y facilita el monitoreo de cambios a lo largo del tiempo
+para evaluar el impacto de las políticas públicas implementadas.</p>
+</div>
+<div id="índice-de-calidad-del-entorno" class="section level2">
+<h2>Índice de Calidad del Entorno</h2>
+<p>El <strong>Índice de Calidad del Entorno (ICE)</strong>, desarrollado
+por el Consejo Nacional de Población (CONAPO), es un indicador compuesto
+que busca medir las características de los asentamientos humanos en
+México, tomando en cuenta factores como la marginación, la
+disponibilidad de servicios y equipamiento urbano. Su objetivo principal
+es ofrecer información que sintetice los factores contextuales negativos
+que limitan la participación e inclusión de las personas, especialmente
+aquellas con discapacidad.</p>
+<p><strong>Dimensiones del ICE:</strong></p>
+<p>El ICE se estructura en tres dimensiones principales:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Dimensión sociodemográfica:</strong> Esta dimensión se basa
+en indicadores socioeconómicos de los índices de marginación, como el
+porcentaje de población en pobreza, el nivel de educación, entre
+otros.</li>
+<li><strong>Dimensión de equipamiento:</strong> Analiza la
+disponibilidad de equipamiento y servicios públicos y privados, como
+escuelas, hospitales, parques, etc.</li>
+<li><strong>Dimensión de conectividad:</strong> Evalúa la calidad de la
+infraestructura de transporte y comunicaciones, así como el acceso a
+internet y otros servicios.</li>
+</ol>
+<p>El ICE es una herramienta útil para:</p>
+<ul>
+<li><strong>Identificar áreas con mayores carencias:</strong> Permite
+identificar las zonas donde se concentran los factores que limitan la
+calidad del entorno, lo que puede ser útil para la toma de decisiones en
+políticas públicas.</li>
+<li><strong>Evaluar el impacto de políticas públicas:</strong> El ICE
+puede ser utilizado para evaluar el impacto de programas y políticas
+públicas en la calidad del entorno.</li>
+<li><strong>Promover la inclusión:</strong> Al visibilizar los factores
+que limitan la inclusión de las personas, el ICE puede contribuir a la
+promoción de políticas que mejoren la calidad de vida de todos los
+ciudadanos.</li>
+</ul>
+<p><strong>Limitaciones del ICE:</strong></p>
+<p>Es importante tener en cuenta que el ICE tiene algunas
+limitaciones:</p>
+<ul>
+<li><strong>Disponibilidad de información:</strong> La disponibilidad de
+información para calcular el ICE puede ser limitada en algunas
+zonas.</li>
+<li><strong>Complejidad del fenómeno:</strong> La calidad del entorno es
+un fenómeno complejo que no puede ser abarcado en su totalidad por un
+solo indicador.</li>
+</ul>
 </div>
 <div id="análisis-espacial" class="section level2">
 <h2>Análisis espacial</h2>
@@ -1673,7 +2069,380 @@ espaciales entre dos variables.</p>
 <h3>4. Geary’s C Bivariado</h3>
 <p>Detecta autocorrelación espacial, pero con más sensibilidad a
 diferencias locales.</p>
+<div id="shapefile" class="section level4">
+<h4>Shapefile</h4>
+<p>La función <code>readOGR</code> del paquete <code>rgdal</code>,
+extrae automáticamente la información utilizada por otros paquetes
+<code>SIG</code> de código abierto como QGIS y permite a R manejar una
+gama más amplia de formatos de datos espaciales. Esta función lee datos
+<code>OGR</code> y datos vectoriales, pero solamente permite manejar
+capas con características geométricas (no mezcla puntos, líneas o
+polígonos en una sola capa) y a su vez establecerá un sistema de
+referencia espacial si la capa tiene dichos metadatos.<br />
+Para leer un archivo <code>shapefile</code>, se establecen los
+siguientes argumentos, como <code>dsn</code>, en donde se indica el
+directorio que contiene los shapes y <code>layer</code> que es el nombre
+explícito de la capa a trabajar y dichas capas deben de ir sin la
+extensión <code>.shp</code>.</p>
+<p>A continuación, se lee el archivo .shp que contiene de manera
+integrada la división de el área geoestadística municipal
+<code>agem</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>shape_estados <span class="ot">&lt;-</span> <span class="fu">readOGR</span>(<span class="at">dsn =</span><span class="st">&quot;D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos&quot;</span>, </span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>                             <span class="at">layer =</span> <span class="st">&quot;00ent&quot;</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>                              <span class="at">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>                               <span class="at">use_iconv =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>shape_municipios <span class="ot">&lt;-</span> <span class="fu">readOGR</span>(<span class="at">dsn =</span><span class="st">&quot;D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos&quot;</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                             <span class="at">layer =</span> <span class="st">&quot;00mun&quot;</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                              <span class="at">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>                               <span class="at">use_iconv =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>La función <code>rename()</code> del paquete <code>dplyr</code>
+permite cambiar el nombre de la columna de la clave geoestadística a
+nivel estatal dentro de la base de datos del shape.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>shape_municipios<span class="sc">@</span>data <span class="ot">&lt;-</span> shape_municipios<span class="sc">@</span>data <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>                          <span class="fu">rename</span>(<span class="st">&quot;CVE_GEO&quot;</span> <span class="ot">=</span> <span class="st">&quot;CVEGEO&quot;</span>)</span></code></pre></div>
 </div>
+</div>
+<div id="base-de-datos" class="section level3">
+<h3>Base de datos</h3>
+<p>La base de datos del índice de calidad del entorno por municipios se
+encuentra disponible en la página oficial de <a href="https://www.gob.mx/conapo/documentos/indice-de-calidad-del-entorno?idiom=es">CONAPO</a>
+o bien se puede consultar en la página de <a href="https://datos.gob.mx/">Datos Abiertos</a> y se presenta en formato
+<code>.xlsx</code> <a href="http://www.conapo.gob.mx/work/models/CONAPO/Datos_Abiertos/DT/ICE_2020.zip">Consulta</a>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">&quot;Bases/Indice de calidad del entorno a nivel municipal.xlsx&quot;</span>, <span class="at">sheet =</span> <span class="st">&quot;ICE_2020&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">CVE_GEO =</span> CVE_MUN) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>           <span class="fu">as.data.frame</span>()</span></code></pre></div>
+</div>
+</div>
+<div id="referencias" class="section level2">
+<h2>Referencias</h2>
+<p>Anselin, L. (1995). Local Indicators of Spatial Association—LISA.
+Geographical Analysis, 27(2), 93–115.</p>
+<p>Global Spatial Autocorrelation (2). (2019). Retrieved February 3,
+2025, from <a href="https://geodacenter.github.io/workbook/5b_global_adv/lab5b.html" class="uri">https://geodacenter.github.io/workbook/5b_global_adv/lab5b.html</a></p>
+</div>
+<div id="librerías" class="section level2">
+<h2>Librerías</h2>
+<p><strong>Librerías que se usaron en el trabajo</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>sesion_info <span class="ot">&lt;-</span> devtools<span class="sc">::</span><span class="fu">session_info</span>()</span></code></pre></div>
+<table class=" lightable-classic" style="font-size: 10px; font-family: montserrat; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+package
+</th>
+<th style="text-align:left;">
+loadedversion
+</th>
+<th style="text-align:left;">
+source
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+dplyr
+</td>
+<td style="text-align:left;">
+1.1.3
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.2)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+forcats
+</td>
+<td style="text-align:left;">
+1.0.0
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ggplot2
+</td>
+<td style="text-align:left;">
+3.4.3
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ggpubr
+</td>
+<td style="text-align:left;">
+0.6.0
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ggspatial
+</td>
+<td style="text-align:left;">
+1.1.9
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.2)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+kableExtra
+</td>
+<td style="text-align:left;">
+1.3.4
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+knitr
+</td>
+<td style="text-align:left;">
+1.45
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.2)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+lubridate
+</td>
+<td style="text-align:left;">
+1.9.3
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.2)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+openxlsx
+</td>
+<td style="text-align:left;">
+4.2.5.2
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+purrr
+</td>
+<td style="text-align:left;">
+1.0.1
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RColorBrewer
+</td>
+<td style="text-align:left;">
+1.1-3
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.0)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+readr
+</td>
+<td style="text-align:left;">
+2.1.4
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+readxl
+</td>
+<td style="text-align:left;">
+1.4.3
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+rgdal
+</td>
+<td style="text-align:left;">
+1.6-7
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sf
+</td>
+<td style="text-align:left;">
+1.0-16
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.3)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+showtext
+</td>
+<td style="text-align:left;">
+0.9-6
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+showtextdb
+</td>
+<td style="text-align:left;">
+3.0
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sp
+</td>
+<td style="text-align:left;">
+2.1-4
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.3)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+spData
+</td>
+<td style="text-align:left;">
+2.3.1
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.3)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+spdep
+</td>
+<td style="text-align:left;">
+1.3-5
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.3)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+spdplyr
+</td>
+<td style="text-align:left;">
+0.4.0
+</td>
+<td style="text-align:left;">
+Github (<a href="mailto:mdsumner/spdplyr@e14dec9017a96c309065ab319da96c839cac6f58" class="email">mdsumner/spdplyr@e14dec9017a96c309065ab319da96c839cac6f58</a>)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+stringr
+</td>
+<td style="text-align:left;">
+1.5.0
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sysfonts
+</td>
+<td style="text-align:left;">
+0.8.8
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tibble
+</td>
+<td style="text-align:left;">
+3.2.1
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tidyr
+</td>
+<td style="text-align:left;">
+1.3.1
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.3)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tidyverse
+</td>
+<td style="text-align:left;">
+2.0.0
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+unikn
+</td>
+<td style="text-align:left;">
+0.9.0
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.1)
+</td>
+</tr>
+</tbody>
+</table>
+<p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img role="img" aria-label="Creative Commons Licence" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAAfCAMAAABUFvrSAAAAAXNSR0IB2cksfwAAAARnQU1BAACxjnz7UZMAAAAgY0hSTQAAeiUAAICDAAD5/wAAgOkAAHUwAADqYAAAOpgAABdvkl/FRgAAAW5QTFRFAAAAAAAA////////////7+/v39/f1tXV09bS0tXS0tXR0dTR0dTQ0NTQ0NPPz9PPztLOztHNzdHNzdHMz8/PzdDMzNDMzNDLzM/Ly8/Ly8/Ky87Kys3Jyc3Jyc3IyMzIyMzHx8vHxsrGxsrFxcnFxcnExMnExMjDw8jDxMfDw8fCwsfCwcXAwMXAwMW/wMS/v8S+v8O+vsO+vsK9vcK9vcK8v7+/vMG8vMG7vMC8u8C7u8C6ur+6ur+5ub65ub64uL23t7y2tru1tbq0tLqztLmzs7iysrixsrexsbewsbawsLavsLWvr7Wur7SusLOvrrStrrOtr7KvrbOsrLKrr6+vq7Gqn6OenqCdn5+flpmWk5iTkZSRkZORj4+PiYyJhIaEhIWEgoWCgICAfX98fH98eXx5cHJvcHBwYGBgXV5dUFFQUFBQQ0RDQEBAPj8+NTY1MjMxMDAwKSkpKCkoICAgGxsbEBAQDg4ODQ4N2y3MbAAAAAR0Uk5T/wAKDnDBpeYAAALVSURBVHjatZX9V9JgFMdvNQh1Tme2zU1othSl5WsQZoqIrxmmqaUpqS2JKczibfLfd5+hHCYybB6/B859ftg+5+57Xx54Ag+iR/hPxGPRSXVYkf2SwHGC2C8rQXUiOhdPLK992tze3vn6/wKLOxseCykBkWXoNp+vrYNh+wJKaDQ8S8jJze0dl2TkvgkOSCx9kqsAqpI7prtFeUh9i+SV9eRWY8rpAqAKaWdwDLkyz6TKUFP5kOECg2p4Lr60ut6Q8kERwMhkDIDigRM4OhaUOfocT6auRSKabuLxfORZYGg0GltAM26k/O0Ssl4K5c3C5YEDeDI0wBOuqXmoqvYRXRzh5NDEzHwCU7aDi6DjMwDkQSg6gFVFYpCb91I1efKYMyMqahhT/rhh8yIN2adVMCoL6ebg4RdsCrmYrp182B0Ijs/EF1eTW/XgAtRl4IVCc7Ai0mUweymbPCaU6T5FfRdLrNi9AINC6QA6iQY0B8s9JwCanUvsg2NWDk3Nohd2cIZCAYrEjAPY35UDE42IZA1Dq4Yf+IoJOaafeLG0tuEOLNEV0BEIRMauFXTysZUOcXD0/fziWtKdFUI7AKaYh5I3UtrPY3vslvYtL9oERY1iwyG4oXgALYvH+wAiFGX5XAvWF/i4l41gbDfKod3cgu0DksEBuYsVnt6ShlaQ0GCF00g7F++qaleBZFOhpcbiEXIRIK9n8q2WkL/rHEyq1m67hhWoErabPzj+odpubtam3JNCL24fkNdTcwvLZPLcLPpX1kh7HUbaJRiX0N5tSyjFBoYncPDIEnIFhlOJOUNy3RryWmtT+gn31G+hs37RezQT4A/Nn8K99YvrPLtxNdHPv0MzVeeDHFqTBWav/jJNMXxzLlBXP+oubkgsnbq+/g9pVnLy4Xptwl3094vY00W3+3ztNMP2fb4AB9mMaK2Lo2lJ4HlBmj4iWLcZP7wePwz20T8rQcP0CuFIbQAAAABJRU5ErkJggg==" alt="Creative Commons Licence" style="border-width:0" /></a><br />This
+work by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName"><strong>Diana Villasana
+Ocampo</strong></span> is licensed under a
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative
+Commons Attribution 4.0 International License</a>.</p>
 </div>
 
 
