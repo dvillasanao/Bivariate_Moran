@@ -167,11 +167,22 @@ El ICE es una herramienta útil para:
  
 ## Análisis espacial  
 
+Utilizando el análisis espacial del ICE es una herramienta poderosa para comprender cómo se distribuye la calidad del entorno en un territorio y para identificar áreas prioritarias para la intervención de políticas públicas. Al visualizar patrones y relaciones espaciales, este tipo de análisis puede contribuir a la toma de decisiones más informadas y a la promoción de un desarrollo más equitativo y sostenible. 
+
+Para realizar un análisis espacial con el ICE, se utilizan herramientas de Sistemas de Información Geográfica (SIG). Estas herramientas permiten:
+
+- **Mapear los datos del ICE**: Se crean mapas que muestran la distribución geográfica de los valores del ICE.  
+- **Analizar patrones espaciales**: Se utilizan técnicas estadísticas y geoestadísticas para identificar patrones y tendencias en la distribución del ICE.  
+- **Relacionar el ICE con otras variables**: Se combinan los datos del ICE con otras variables geográficas para analizar sus relaciones y comprender mejor los factores que influyen en la calidad del entorno.  
+
 ## Correlaciones espaciales
 
-### 1. Moran's I Bivariado (Bivariate Moran's I) 
- 
-  Este método mide la correlación espacial entre dos variables en diferentes ubicaciones. Se calcula como:  
+### 1. Moran's I Bivariado (Bivariate Moran's I)  
+
+El **Moran's I Bivariado** (Bivariate Moran’s I) es una extensión del índice de Moran tradicional, que mide la autocorrelación espacial entre dos variables diferentes en una misma área geográfica. En otras palabras, evalúa si los valores altos (o bajos) de una variable en una ubicación están asociados con los valores altos (o bajos) de otra variable en ubicaciones vecinas.
+
+Este método mide la correlación espacial entre dos variables en diferentes ubicaciones. Se calcula como:   
+
   \[
     I_B = \frac{\sum_i \sum_j w_{ij} (X_i - \bar{X}) (Y_j - \bar{Y})}{S^2 \sum_i \sum_j w_{ij}}
     \]  
@@ -183,16 +194,135 @@ donde:
 - \( w_{ij} \) es la matriz de pesos espaciales.  
 - \( S^2 \) es la varianza de \( X \).  
 
- 
+ Este índice mide la asociación entre \( X \) en una ubicación y \( Y \) en ubicaciones vecinas, utilizando la matriz de pesos espaciales.
+
+---
+  
+#### **Interpretación del Moran’s I Bivariado**  
+  
+  - **\( I_B > 0 \):** Existe una relación positiva entre \( X \) e \( Y \), lo que indica que valores altos (bajos) de \( X \) están asociados con valores altos (bajos) de \( Y \) en áreas vecinas.
+- **\( I_B < 0 \):** Existe una relación negativa, es decir, valores altos de \( X \) están asociados con valores bajos de \( Y \) en áreas vecinas y viceversa.
+- **\( I_B \approx 0 \):** No hay una relación espacial significativa entre las dos variables.
+
+
 ### 2. LISA Bivariado (`Bivariate Local Moran’s I`)     
 
-Permite identificar agrupaciones espaciales locales entre dos variables. Se puede calcular con `spdep::localmoran()`, utilizando una variable como \( X \) y la otra como \( Y \).  
+El **LISA Bivariado** (*Bivariate Local Moran’s I*) es una extensión del **Local Indicator of Spatial Association (LISA)**, que permite evaluar la correlación espacial entre dos variables en ubicaciones específicas dentro de una región. Su objetivo es identificar clústeres espaciales locales donde los valores de una variable están asociados con los valores de otra variable en ubicaciones vecinas.  
 
-### 3. Getis-Ord Bivariado (Bivariate G)
-Este método identifica zonas de altas y bajas correlaciones espaciales entre dos variables.
 
-### 4. Geary's C Bivariado
-Detecta autocorrelación espacial, pero con más sensibilidad a diferencias locales.
+Para cada ubicación \(i\), el **LISA Bivariado** se calcula como:
+  
+  \[
+    I_B(i) = (X_i - \bar{X}) \sum_j w_{ij} (Y_j - \bar{Y})
+    \]
+
+Donde:
+  
+- \( X_i \) es el valor de la variable de interés en la ubicación \( i \).
+- \( Y_j \) es el valor de la segunda variable en la ubicación \( j \) (vecina de \( i \)).
+- \( \bar{X} \) y \( \bar{Y} \) son las medias de \( X \) e \( Y \), respectivamente.
+- \( w_{ij} \) es el peso espacial que indica la relación entre las ubicaciones \( i \) y \( j \), definido en una matriz de pesos espaciales.
+
+  
+#### **Interpretación del LISA Bivariado**  
+
+El resultado para cada punto \( i \) indica si existe una relación espacial significativa entre \( X_i \) y \( Y_j \) en su vecindario:
+  
+
+```{r, echo = FALSE}
+tabla <- data.frame("Patrón espacial" = c("Alto-Alto (HH)", "Bajo-Bajo (LL)", "Alto-Bajo (HL)", "Bajo-Alto (LH)"),
+                    "Interpretación" = c("Valores altos de X asociados con valores altos de Y en vecinos",
+                                         "Valores bajos de X asociados con valores bajos de Y en vecinos",
+                                         "Valores altos de X asociados con valores bajos de Y en vecinos (Outlier espacial)",
+                                         "Valores bajos de X asociados con valores altos de Y en vecinos (Outlier espacial)"))
+require(knitr)
+require(kableExtra)
+
+tabla %>%
+ kable(size = 9) %>%
+  kable_classic(full_width = FALSE)
+```
+
+Los patrones HH y LL indican **clústeres espaciales**, mientras que HL y LH pueden indicar **valores atípicos espaciales**.
+
+
+### 3. Getis-Ord Bivariado (Bivariate G)   
+
+El **Índice Getis-Ord Bivariado (\(G^*\))**, también conocido como **Bivariate Getis-Ord \(G^*\)**, es una extensión del estadístico **Getis-Ord \(G_i^*\)** que permite analizar la asociación espacial entre dos variables distintas en una misma área geográfica.  
+
+Este índice identifica **clústeres espaciales bivariados**, es decir, lugares donde los valores altos (o bajos) de una variable están asociados con valores altos (o bajos) de otra variable en áreas vecinas.
+
+---
+
+La versión bivariada del Getis-Ord \( G^* \) se define como:
+  
+  \[
+    G_{XY}^*(i) = \frac{\sum_{j} w_{ij} X_j Y_j}{\sum_j X_j Y_j}
+    \]
+
+Donde:  
+
+- \( X_j \) y \( Y_j \) son los valores de las variables \(X\) e \(Y\) en la ubicación \(j\).
+- \( w_{ij} \) es el peso espacial entre las ubicaciones \(i\) y \(j\), basado en la matriz de pesos espaciales.
+- \( \sum_{j} X_j Y_j \) es la suma total de los productos de \(X\) e \(Y\).
+
+**Estandarización Z-score**   
+
+Para determinar la significancia de \( G^*_{XY} \), se utiliza la normalización:  
+
+  
+  \[
+    Z_{XY}^*(i) = \frac{G_{XY}^*(i) - E(G_{XY}^*)}{S(G_{XY}^*)}
+    \]
+
+Donde: 
+
+- \( E(G_{XY}^*) \) es la esperanza matemática del índice.
+- \( S(G_{XY}^*) \) es la desviación estándar.
+
+Un **Z-score alto y positivo** indica un **clúster caliente (hot spot)** donde valores altos de \(X\) están asociados con valores altos de \(Y\).  
+Un **Z-score bajo y negativo** indica un **clúster frío (cold spot)** con valores bajos de \(X\) asociados a valores bajos de \(Y\).   
+
+
+### 4. Geary's C Bivariado   
+
+iEl **Índice de Geary’s C Bivariado** es una extensión del índice clásico de **Geary’s C**, pero aplicado a dos variables distintas para analizar la relación espacial entre ellas. Mientras que el **Moran’s I Bivariado** mide la autocorrelación espacial de manera global, el **Geary’s C Bivariado** se centra en **las diferencias locales entre valores vecinos**, por lo que es más sensible a patrones de discontinuidad espacial.   
+
+\[
+    C_{XY} = \frac{\sum_{i} \sum_{j} w_{ij} (X_i - Y_j)^2}{2S_0 \sum_{i} (X_i - \bar{X})^2}
+    \]
+
+Donde:
+  
+  - \( X_i \) es el valor de la variable \(X\) en la ubicación \(i\).
+- \( Y_j \) es el valor de la variable \(Y\) en la ubicación vecina \(j\).
+- \( w_{ij} \) es el peso espacial que define la relación entre \(i\) y \(j\) en la matriz de pesos espaciales.
+- \( S_0 = \sum_{i} \sum_{j} w_{ij} \) es la suma total de los pesos espaciales.
+- \( \bar{X} \) es la media de \(X\).
+
+El índice **Geary’s C Bivariado** mide **la disimilitud espacial entre dos variables en ubicaciones vecinas**.  
+
+**Interpretación del Geary’s C Bivariado**  
+  
+```{r, echo = FALSE}
+tabla <- data.frame(
+  "Valor de C_{XY}" = c("<span style='font-family:Times New Roman;'>C<sub>XY</sub> > 1</span>",
+                        "<span style='font-family:Times New Roman;'>C<sub>XY</sub> ≈ 1</span>",
+                        "<span style='font-family:Times New Roman;'>C<sub>XY</sub> < 1</span>"),
+  "Interpretación" = c(
+    "Dispersión espacial: Valores altos de X están asociados con valores bajos de Y en vecinos (patrón de discontinuidad).",
+    "Aleatoriedad espacial: No hay un patrón claro entre X e Y.",
+    "Clustering espacial: Valores similares de X están cercanos a valores similares de Y en vecinos."
+  )
+)
+
+tabla %>%
+  kable(escape = FALSE, size = 9, align = "c") %>%
+  kable_classic(full_width = FALSE)
+```
+
+
+  
 
 #### Shapefile
 
@@ -234,11 +364,29 @@ data <- read_xlsx("Bases/Indice de calidad del entorno a nivel municipal.xlsx", 
            as.data.frame()
 ```
 
+### SpatialPolygons
+
+Se fusionan los datos del `shape_municipios` con datos estadísticos del índice de calidad del entorno a nivel municipal (`IMM_2020`), excluyendo las claves estatales y municipales (`CVE_MUN`) y asegurando que `G_ICE` se ordene de acuerdo a los grados de calidad del entorno, de igual manera los grados de marginación (`GM_2020`), equipamiento (`G_IE`) y accesibilidad (`GACC`). El resultado es `layer_municipios`, un objeto que contiene a los municipios junto con sus atributos actualizados, lo que facilita su análisis y visualización en mapas.
+
+#### $$SpatialPolygons \Rightarrow SpatialPolygons + Datos$$
+
+```{r, class.source = "fold-show"}
+layer_municipios <- merge(shape_municipios,
+                           data %>% dplyr::select(c(-CVE_MUN)) %>%
+                                         mutate(G_ICE = fct_relevel(.$G_ICE,"Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                GM_2020 = fct_relevel(.$GM_2020, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                G_IE = fct_relevel(.$G_IE, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                GACC = fct_relevel(.$GACC, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo")),
+                            by = "CVE_GEO")
+```
+
 ## Referencias 
 
 Anselin, L. (1995). Local Indicators of Spatial Association—LISA. Geographical Analysis, 27(2), 93–115.
 
 Global Spatial Autocorrelation (2). (2019). Retrieved February 3, 2025, from https://geodacenter.github.io/workbook/5b_global_adv/lab5b.html 
+
+Tutorial of rgeoda • rgeoda. (2021). Retrieved February 3, 2025, from https://geodacenter.github.io/rgeoda/articles/rgeoda_tutorial.html
 
 ## Librerías
 
