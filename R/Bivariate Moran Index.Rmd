@@ -322,9 +322,7 @@ tabla %>%
 ```
 
 
-  
-
-#### Shapefile
+## Shapefile
 
 La función `readOGR` del paquete `rgdal`, extrae automáticamente la información utilizada por otros paquetes `SIG` de código abierto como QGIS y permite a R manejar una gama más amplia de formatos de datos espaciales. Esta función lee datos `OGR` y datos vectoriales, pero solamente permite manejar capas con características geométricas (no mezcla puntos, líneas o polígonos en una sola capa) y a su vez establecerá un sistema de referencia espacial si la capa tiene dichos metadatos.\
 Para leer un archivo `shapefile`, se establecen los siguientes argumentos, como `dsn`, en donde se indica el directorio que contiene los shapes y `layer` que es el nombre explícito de la capa a trabajar y dichas capas deben de ir sin la extensión `.shp`.
@@ -379,6 +377,39 @@ layer_municipios <- merge(shape_municipios,
                                                 GACC = fct_relevel(.$GACC, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo")),
                             by = "CVE_GEO")
 ```
+
+
+```{r, fig.height=8, fig.width=10, eval = FALSE, class.source = "fold-hide"}
+# Paleta de colores 
+require(RColorBrewer)
+require(ggspatial)
+require(ggpubr)
+
+values = rev(brewer.pal(5, "RdPu"))
+                          
+p <- ggplot() + 
+      layer_spatial(layer_municipios, aes(fill = G_ICE), color = "transparent") + 
+       layer_spatial(shape_estados, fill = "transparent", color = "black") + 
+        theme_bw() + 
+         theme(plot.title = element_text(size = 22, hjust = 0.15, family = "montserrat", face = "bold"),
+               plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "montserrat"), 
+               legend.key.size = unit(0.5, "cm"),
+               legend.text = element_text(size = 12, family = "montserrat"), 
+               legend.title = element_text(size = 10, hjust = 0.5, family = "montserrat", face = "bold"),
+               legend.position = "right"
+               ) + 
+          scale_fill_manual(values = values) + 
+           scale_color_manual(values = c("#BDBDBD")) + 
+            #guides(color = guide_legend(override.aes = list(fill = usecol(pal = pal_petrol, n = 5)))) +
+     labs(title = "Índice de Calidad del Entorno a nivel municipal, 2020",
+           fill = stringr::str_wrap("ICE", 10), 
+            caption = stringr::str_wrap(paste("Fuente: Estimaciones del CONAPO con base en el INEGI, Censo de Población y Vivienda 2020 y Directorio Estadístico Nacional de Unidades Económicas; SEP, Sistema de Información y Gestión Educativa; y SS, Catálogo de Clave Única de Establecimientos de Salud."), 100))
+p
+path = "Output/Mapa del ICE a nivel municipal.pdf"
+ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
+```
+
+![](../Output/Mapa del ICE a nivel municipal.png){width="70%" fig-align="center"}
 
 ## Referencias 
 
