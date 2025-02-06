@@ -257,8 +257,8 @@ p <- ggplot() +
            fill = stringr::str_wrap("ICE", 10), 
             caption = stringr::str_wrap(paste("Fuente: Estimaciones del CONAPO con base en el INEGI, Censo de Población y Vivienda 2020 y Directorio Estadístico Nacional de Unidades Económicas; SEP, Sistema de Información y Gestión Educativa; y SS, Catálogo de Clave Única de Establecimientos de Salud."), 100))
 p
-path = "Output/Mapa del ICE a nivel municipal.pdf"
-ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
+#path = "Output/Mapa del ICE a nivel municipal.pdf"
+#ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
 ![](Output/Mapa del ICE a nivel municipal.png){width="70%" fig-align="center"}
@@ -295,8 +295,8 @@ p <- ggplot() +
            fill = stringr::str_wrap("G. Marginación", 15), 
             caption = stringr::str_wrap(paste("Fuente: Estimaciones del CONAPO con base en el INEGI, Censo de Población y Vivienda 2020."), 100))
 p
-path = "Output/Mapa del índice de marginación municipal.pdf"
-ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
+#path = "Output/Mapa del índice de marginación municipal.pdf"
+#ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
 ![](Output/Mapa del índice de marginación municipal.png){width="70%" fig-align="center"}
@@ -329,8 +329,8 @@ p <- ggplot() +
            fill = stringr::str_wrap("G. Equipamiento", 15), 
             caption = stringr::str_wrap(paste("Fuente: Estimaciones del CONAPO con base en el INEGI, Directorio Estadístico Nacional de Unidades Económicas; SEP, Sistema de Información y Gestión Educativa; y SS, Catálogo de Clave Única de Establecimientos de Salud."), 100))
 p
-path = "Output/Mapa del índice de equipamiento municipal.pdf"
-ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
+#path = "Output/Mapa del índice de equipamiento municipal.pdf"
+#ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
 ![](Output/Mapa del índice de equipamiento municipal.png){width="70%" fig-align="center"}
@@ -365,8 +365,8 @@ p <- ggplot() +
             caption = stringr::str_wrap(paste("Fuente: Estimaciones del CONAPO con base en el INEGI, Principales resultados por
 localidad (ITER) del Censo de Población y Vivienda 2020; e INEGI y SCT/IMT. Red Nacional de Caminos 2020."), 100))
 p
-path = "Output/Mapa del índice de accesibilidad.pdf"
-ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
+#path = "Output/Mapa del índice de accesibilidad.pdf"
+#ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
 
@@ -409,4 +409,7 @@ layer_localicad_p <- spdplyr:::inner_join.Spatial(shape_localidad_p,
                                                                      GACC = fct_relevel(.$GACC, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo")),
                                                   by = "CVE_GEO")
 ```
+
+
+
 
