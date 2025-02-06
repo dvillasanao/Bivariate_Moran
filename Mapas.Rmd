@@ -176,17 +176,34 @@ shape_municipios <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos",
                                use_iconv = TRUE)
 ```
 
-La función `rename()` del paquete `dplyr` permite cambiar el nombre de la columna de la clave geoestadística a nivel estatal dentro de la base de datos del shape.
+**Shapefile localidades (polígonos) 2020**
 
-```{r,class.source = "fold-show"}
-shape_municipios@data <- shape_municipios@data %>%
-                          rename("CVE_GEO" = "CVEGEO")
+```{r}
+shape_localidad <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
+                            layer = "00l",
+                             encoding = "UTF-8",
+                              use_iconv = TRUE)
+
+## Se filtra por AMBITO == "Urbana"
+shape_localidad <- shape_localidad %>%
+                    filter(AMBITO == "Urbana") %>%
+                     rename("CVE_GEO" = "CVEGEO")
 ```
 
+**Shapefile localidades (puntos) 2020**
+
+```{r}
+shape_localidad_p <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
+                             layer = "00lpr",
+                             encoding = "UTF-8",
+                             use_iconv = TRUE)
+```
+
+## Municipal  
 
 ### Base de datos
 
-La base de datos del índice de calidad del entorno por municipios se encuentra disponible en la página oficial de [CONAPO](https://www.gob.mx/conapo/documentos/indice-de-calidad-del-entorno?idiom=es) o bien se puede consultar en la página de [Datos Abiertos](https://datos.gob.mx/) y se presenta en formato `.xlsx` [Consulta](http://www.conapo.gob.mx/work/models/CONAPO/Datos_Abiertos/DT/ICE_2020.zip).
+La base de datos del índice de calidad del entorno por localidades se encuentra disponible en la página oficial de [CONAPO](https://www.gob.mx/conapo/documentos/indice-de-calidad-del-entorno?idiom=es) o bien se puede consultar en la página de [Datos Abiertos](https://datos.gob.mx/) y se presenta en formato `.xlsx` [Consulta](http://www.conapo.gob.mx/work/models/CONAPO/Datos_Abiertos/DT/ICE_2020.zip).
 
 
 ```{r, class.source = "fold-show"}
@@ -195,7 +212,6 @@ data <- read_xlsx("Bases/Indice de calidad del entorno a nivel municipal.xlsx", 
            as.data.frame()
 ```
 
-## Municipal  
 
 ### SpatialPolygons
 
@@ -353,4 +369,19 @@ path = "Output/Mapa del índice de accesibilidad.pdf"
 ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
+
 ![](Output/Mapa del índice de accesibilidad.png){width="70%" fig-align="center"}
+
+
+## Localidad 
+
+### Base de datos
+
+La base de datos del índice de calidad del entorno por localidades se encuentra disponible en la página oficial de [CONAPO](https://www.gob.mx/conapo/documentos/indice-de-calidad-del-entorno?idiom=es) o bien se puede consultar en la página de [Datos Abiertos](https://datos.gob.mx/) y se presenta en formato `.xlsx` [Consulta](http://www.conapo.gob.mx/work/models/CONAPO/Datos_Abiertos/DT/ICE_2020.zip).
+
+
+```{r, class.source = "fold-show"}
+data <- read_xlsx("Bases/Indice de calidad del entorno a nivel municipal.xlsx", sheet = "ICE_2020") %>%
+          mutate(CVE_GEO = CVE_MUN) %>%
+           as.data.frame()
+```
