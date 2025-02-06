@@ -381,7 +381,32 @@ La base de datos del índice de calidad del entorno por localidades se encuentra
 
 
 ```{r, class.source = "fold-show"}
-data <- read_xlsx("Bases/Indice de calidad del entorno a nivel municipal.xlsx", sheet = "ICE_2020") %>%
-          mutate(CVE_GEO = CVE_MUN) %>%
+data <- read_xlsx("Bases/Indice de calidad del entorno a nivel localidad.xlsx", sheet = "ICE_2020") %>%
+          mutate(CVE_GEO = CVE_LOC) %>%
            as.data.frame()
 ```
+
+### SpatialPolygons
+
+Se fusionan los datos del `shape_localidad` con datos estadísticos del índice de calidad del entorno a nivel localidad (`ICE`), excluyendo las claves estatales, municipales y localidad (`CVE_LOC`) y asegurando que `G_ICE` se ordene de acuerdo a los grados de calidad del entorno, de igual manera los grados de marginación (`GM_2020`), equipamiento (`G_IE`) y accesibilidad (`GACC`). El resultado es `layer_municipios`, un objeto que contiene a los municipios junto con sus atributos actualizados, lo que facilita su análisis y visualización en mapas.
+
+#### $$SpatialPolygons \Rightarrow SpatialPolygons + Datos$$
+
+```{r}
+layer_localicad <- spdplyr:::inner_join.Spatial(shape_localidad,
+                                                data %>% dplyr::select(c(-CVE_LOC)) %>%
+                                                               mutate(G_ICE = fct_relevel(.$G_ICE,"Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      GM_2020 = fct_relevel(.$GM_2020, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      G_IE = fct_relevel(.$G_IE, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      GACC = fct_relevel(.$GACC, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo")),
+                                                  by = "CVE_GEO")
+
+layer_localicad_p <- spdplyr:::inner_join.Spatial(shape_localidad_p,
+                                                  data %>% dplyr::select(c(-CVE_LOC)) %>%
+                                                               mutate(G_ICE = fct_relevel(.$G_ICE,"Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      GM_2020 = fct_relevel(.$GM_2020, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      G_IE = fct_relevel(.$G_IE, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                     GACC = fct_relevel(.$GACC, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo")),
+                                                  by = "CVE_GEO")
+```
+
