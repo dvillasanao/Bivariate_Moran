@@ -310,7 +310,7 @@ require(ggspatial)
 require(ggpubr)
 
 values =   rev(brewer.pal(5, "Blues"))
-                          
+"#08519C" "#3182BD" "#6BAED6" "#BDD7E7" "#EFF3FF"                          
 p <- ggplot() + 
       layer_spatial(layer_municipios, aes(fill = G_IE), color = "transparent") + 
        layer_spatial(shape_estados, fill = "transparent", color = "black") + 
@@ -345,7 +345,7 @@ require(ggpubr)
 
 values =  pals::ocean.haline(5)
 #values = rev(c("#1A0086", "#1F42D5", "#4B9B41", "#C0CC23", "#f7e65a"))
-                          
+ "#2A186C" "#0F5A90" "#3B9287" "#78CA66" "#FDEF9A"                         
 p <- ggplot() + 
       layer_spatial(layer_municipios, aes(fill = GACC), color = "transparent") + 
        layer_spatial(shape_estados, fill = "transparent", color = "black") + 
@@ -569,6 +569,62 @@ p
 
 
 ![](Output/Mapa del índice de accesibilidad localidad.png){width="70%" fig-align="center"}
+## LISA Bivariado (`Bivariate Local Moran’s I`)  
+
+-   `X_nb_queen` almacena la lista de vecinos generada por `poly2nb()` usando la regla de la reina, con el parámetro `queen = TRUE`.
+-   Es un objeto de clase *nb* (neighborhood), que es una estructura que se utiliza para representar relaciones espaciales en análisis de datos espaciales
+
+```{r}
+# Construyendo lista de vecinos con criterio tipo reina
+X_nb_queen = poly2nb(layer_localicad, queen = TRUE)
+```
+
+Dado que `layer_localidad_p` es un `SpatialPointsDataFrame`, la función `poly2nb()` no es adecuada, ya que esta función espera una capa de polígonos (`SpatialPolygonsDataFrame`). Para calcular distancias entre puntos en un `SpatialPointsDataFrame`, puedes usar la función `spDists()` de la librería **sp** o `st_distance()` de la librería **sf**.
+ 
+ 
+```{r}
+library(sp)
+# Se calcula la matriz de distancias geodésicas en kilómetros
+dist_matrix <- spDists(layer_localicad_p, longlat = TRUE) 
+```
+Esto te devuelve una matriz donde cada celda `(i, j)` representa la distancia entre los puntos `i` y `j`.
+
+
+Se convierte la lista de vecinos `X_nb_queen` (creada previamente con `poly2nb()`) en una matriz de pesos espaciales, que se usará en cálculos como el índice de Moran, Geary o otros modelos espaciales.
+
+```{r}
+weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
+weights_p <- nb2listw(X_nb_queen_p, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
+```
+
+Se categorizan las posibles combinaciones de las relaciones del Índice de Calidad del Entorno con los otros 3 indicadores:
+
+1.  Índice de marginación
+
+2.  Índice de equipamiento
+
+3.  Índice de accesibilidad   
+
+
+**Índice de marginación**   
+
+
+```{r}
+library(sfdep)
+
+# Calculo de  Local Bivariate Moran's I 
+bivariate_LISA <- sfdep::local_moran_bv(x = layer_localicad$ICE, 
+                                        y = layer_localicad$IM_2020,
+                                        nb = weights[["neighbours"]],
+                                        wt = weights[["weights"]]
+                                        )
+
+bivariate_LISA_p <- sfdep::local_moran_bv(x = layer_localicad_p$ICE, 
+                                          y = layer_localicad_p$IM_2020,
+                                          nb = weights[["neighbours"]],
+                                          wt = weights[["weights"]]
+                                          )
+```
 
 ## Librerías
 
