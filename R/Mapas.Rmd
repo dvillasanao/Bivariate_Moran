@@ -592,7 +592,7 @@ Esto te devuelve una matriz donde cada celda `(i, j)` representa la distancia en
 
 Se convierte la lista de vecinos `X_nb_queen` (creada previamente con `poly2nb()`) en una matriz de pesos espaciales, que se usará en cálculos como el índice de Moran, Geary o otros modelos espaciales.
 
-```{r}
+```{r, eval = FALSE}
 weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
 weights_p <- nb2listw(X_nb_queen_p, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
 ```
@@ -609,7 +609,7 @@ Se categorizan las posibles combinaciones de las relaciones del Índice de Calid
 **Índice de marginación**   
 
 
-```{r}
+```{r, eval = FALSE}
 library(sfdep)
 
 # Calculo de  Local Bivariate Moran's I 
