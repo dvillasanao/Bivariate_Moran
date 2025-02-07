@@ -108,7 +108,7 @@ setwd(here::here())
 rm(list = ls())
 ```
 
-```{r, echo = FALSE, results=FALSE}
+```{r, echo = FALSE, results=FALSE, eval = TRUE}
 # Paquetes que se usaron en el documento 
 require(dplyr)          #A Grammar of Data Manipulation 
 require(ggplot2)        # Generar gráficos ggplot y la geometría de un mapa
@@ -399,7 +399,7 @@ layer_localicad <- spdplyr:::inner_join.Spatial(shape_localidad,
                                                                mutate(G_ICE = fct_relevel(.$G_ICE,"Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
                                                                       GM_2020 = fct_relevel(.$GM_2020, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
                                                                       G_IE = fct_relevel(.$G_IE, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
-                                                                      GACC = fct_relevel(.$GACC, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo")),
+                                                                      GACC = fct_relevel(.$GACC, "Muy alto (menos de 30 min)", "Alto (de 31 a 60 min)", "Medio (de 61 a 90 min)", "Bajo (de 91 a 120 min)", "Muy  bajo (más de 120 min)", "Sin localización en la red")),
                                                   by = "CVE_GEO")
 
 layer_localicad_p <- spdplyr:::inner_join.Spatial(shape_localidad_p,
@@ -407,10 +407,10 @@ layer_localicad_p <- spdplyr:::inner_join.Spatial(shape_localidad_p,
                                                                mutate(G_ICE = fct_relevel(.$G_ICE,"Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
                                                                       GM_2020 = fct_relevel(.$GM_2020, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
                                                                       G_IE = fct_relevel(.$G_IE, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
-                                                                     GACC = fct_relevel(.$GACC, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo")),
+                                                                     GACC = fct_relevel(.$GACC, "Muy alto (menos de 30 min)", "Alto (de 31 a 60 min)", "Medio (de 61 a 90 min)", "Bajo (de 91 a 120 min)", "Muy  bajo (más de 120 min)", "Sin localización en la red")),
                                                   by = "CVE_GEO")
 
-table(layer_localicad@data$G_ICE)
+table(layer_localicad@data$GACC)
 ```
 
 
@@ -453,3 +453,136 @@ p
 
 
 ![](Output/Mapa del ICE a nivel localidad.png){width="70%" fig-align="center"}
+
+**Índice de Marginación 2020**  
+
+```{r, fig.height=8, fig.width=10, eval = FALSE, class.source = "fold-hide"}
+# Paleta de colores 
+require(RColorBrewer)
+require(ggspatial)
+require(ggpubr)
+
+values =   c("#13322B", #Muy alto
+             "#086953", #Alto 
+             "#4C9562", #Medio
+             "#D1BB9E", #Bajo
+             "#C3BA6D") # Muy bajo
+                          
+p <- ggplot() + 
+      layer_spatial(layer_localicad %>% filter(IM_2020 >= 0), aes(fill = GM_2020), color = "transparent") + 
+       layer_spatial(layer_localicad_p %>% filter(IM_2020 >= 0), aes(color = GM_2020), size = 0.2) + 
+        layer_spatial(shape_estados, fill = "transparent", color = "black") + 
+         theme_bw() + 
+          theme(plot.title = element_text(size = 22, hjust = 0.15, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 9, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "right"
+                ) + 
+           scale_fill_manual(values = values) + 
+            scale_color_manual(values = values) + 
+            #guides(color = guide_legend(override.aes = list(fill = usecol(pal = pal_petrol, n = 5)))) +
+     labs(title = "Índice de Marginación a nivel localidad, 2020",
+          fill = stringr::str_wrap("G. Marginación", 15), 
+          color = stringr::str_wrap("G. Marginación", 15), 
+          caption = stringr::str_wrap(paste("Fuente: Estimaciones del CONAPO con base en el INEGI, Censo de Población y Vivienda 2020."), 100))
+p
+#path = "Output/Mapa del índice de marginación localidad.pdf"
+#ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
+```
+
+![](Output/Mapa del índice de marginación localidad.png){width="70%" fig-align="center"}
+
+**Índice de Equipamiento**  
+
+```{r, fig.height=8, fig.width=10, eval = FALSE, class.source = "fold-hide"}
+# Paleta de colores 
+require(RColorBrewer)
+require(ggspatial)
+require(ggpubr)
+
+values =   rev(brewer.pal(5, "Blues"))
+                          
+p <- ggplot() + 
+      layer_spatial(layer_localicad %>% filter(IE >= 0), aes(fill = G_IE), color = "transparent") + 
+       layer_spatial(layer_localicad_p %>% filter(IE >= 0), aes(color = G_IE), size = 0.2) + 
+        layer_spatial(shape_estados, fill = "transparent", color = "black") + 
+         theme_bw() + 
+          theme(plot.title = element_text(size = 22, hjust = 0.15, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 9, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "right"
+                ) + 
+           scale_fill_manual(values = values) + 
+            scale_color_manual(values = values) + 
+            #guides(color = guide_legend(override.aes = list(fill = usecol(pal = pal_petrol, n = 5)))) +
+      labs(title = "Índice de Equipamiento a nivel localidad, 2020",
+           fill = stringr::str_wrap("G. Equipamiento", 15), 
+           color = stringr::str_wrap("G. Equipamiento", 15), 
+           caption = stringr::str_wrap(paste("Fuente: Estimaciones del CONAPO con base en el INEGI, Directorio Estadístico Nacional de Unidades Económicas; SEP, Sistema de Información y Gestión Educativa; y SS, Catálogo de Clave Única de Establecimientos de Salud."), 100))
+p
+path = "Output/Mapa del índice de equipamiento localidad.pdf"
+ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
+```
+
+![](Output/Mapa del índice de equipamiento localidad.png){width="70%" fig-align="center"}
+
+
+**Índice de Accesibilidad**  
+
+```{r, fig.height=8, fig.width=10, eval = FALSE, class.source = "fold-hide"}
+# Paleta de colores 
+require(RColorBrewer)
+require(ggspatial)
+require(ggpubr)
+
+values =  pals::ocean.haline(5)
+#values = rev(c("#1A0086", "#1F42D5", "#4B9B41", "#C0CC23", "#f7e65a"))
+                          
+p <- ggplot() + 
+      layer_spatial(layer_localicad %>% filter(IAL >= 0), aes(fill = GACC), color = "transparent") + 
+       layer_spatial(layer_localicad_p %>% filter(IAL >= 0), aes(color = GACC), size = 0.2) + 
+        layer_spatial(shape_estados, fill = "transparent", color = "black") + 
+         theme_bw() + 
+          theme(plot.title = element_text(size = 22, hjust = 0.15, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 9, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "right"
+                ) + 
+           scale_fill_manual(values = values) + 
+            scale_color_manual(values = values) + 
+            #guides(color = guide_legend(override.aes = list(fill = usecol(pal = pal_petrol, n = 5)))) +
+     labs(title = "Índice de Accesibilidad a nivel localidad, 2020",
+          fill = stringr::str_wrap("G. Accesibilidad", 20), 
+          color = stringr::str_wrap("G. Accesibilidad", 20), 
+          caption = stringr::str_wrap(paste("Fuente: Estimaciones del CONAPO con base en el INEGI, Principales resultados por
+localidad (ITER) del Censo de Población y Vivienda 2020; e INEGI y SCT/IMT. Red Nacional de Caminos 2020."), 100))
+p
+#path = "Output/Mapa del índice de accesibilidad localidad.pdf"
+#ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
+```
+
+
+![](Output/Mapa del índice de accesibilidad localidad.png){width="70%" fig-align="center"}
+
+## Librerías
+
+**Librerías que se usaron en el trabajo** 
+
+```{r, collapse=FALSE, eval = TRUE}
+sesion_info <- devtools::session_info()
+```
+
+```{r, echo = FALSE, eval = TRUE}
+kable(dplyr::select(tibble::as_tibble(sesion_info$packages %>% dplyr::filter(attached == TRUE)),
+                    c(package, loadedversion, source))) %>%
+   kable_classic(full_width = TRUE, html_font = "montserrat", font_size = 10) 
+```
+
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img src="https://i.creativecommons.org/l/by/4.0/88x31.png" alt="Creative Commons Licence" style="border-width:0"/></a><br />This work by [**Diana Villasana Ocampo**]{xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName"} is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+

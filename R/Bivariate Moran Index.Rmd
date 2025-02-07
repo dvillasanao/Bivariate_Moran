@@ -129,9 +129,9 @@ require(unikn)          # Paleta de colores
 ```{r, echo = FALSE, results=FALSE}
 # Se descargan las fuentes de la google fonts
 require(showtext)
+library(extrafont)
 # activar showtext
-showtext_auto()
-font_add_google("Montserrat", "montserrat")
+windowsFonts()
 ```
 
 
@@ -379,6 +379,9 @@ layer_municipios <- merge(shape_municipios,
 ```
 
 
+**Índice de Calidad del Entorno**  
+
+
 ```{r, fig.height=8, fig.width=10, eval = FALSE, class.source = "fold-hide"}
 # Paleta de colores 
 require(RColorBrewer)
@@ -410,6 +413,113 @@ ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
 ![](../Output/Mapa del ICE a nivel municipal.png){width="70%" fig-align="center"}
+### Centroides
+
+La función `coordinates()` extrae las coordenadas de los centroides de los polígonos en $(x,y)$ de la base de datos espacial y la almacenamos en la variable `coords`, para su posterior uso en el código.
+
+```{r}
+# Extrayendo coordenadas desde la base de datos espaciales.
+coords = coordinates(layer_municipios)
+```
+
+
+## Moran's I Bivariado (Bivariate Moran's I)   
+
+-   `X_nb_queen` almacena la lista de vecinos generada por `poly2nb()` usando la regla de la reina, con el parámetro `queen = TRUE`.
+-   Es un objeto de clase *nb* (neighborhood), que es una estructura que se utiliza para representar relaciones espaciales en análisis de datos espaciales.
+
+```{r}
+# Construyendo lista de vecinos con criterio tipo reina
+X_nb_queen = poly2nb(layer_municipios, queen = TRUE)  
+summary(X_nb_queen)
+```
+
+- **La mayoría de los municipios tienen entre 3 y 8 vecinos**, con un promedio de ~5.8 vecinos.  
+- **Algunos municipios son casi aislados (solo 1 vecino), mientras que otros tienen hasta 22 vecinos.**  
+- **Los municipios más conectados probablemente están en zonas urbanas densas**, mientras que los menos conectados podrían estar en fronteras, islas o regiones rurales.  
+- **La red espacial tiene una conectividad moderada (23.67% de conexiones posibles están activas),** lo que sugiere que el mapa tiene una distribución geográfica variada.
+
+### Pesos espaciales 
+
+Se convierte la lista de vecinos `X_nb_queen` (creada previamente con `poly2nb()`) en una matriz de pesos espaciales, que se usará en cálculos como el índice de Moran, Geary o otros modelos espaciales. 
+
+```{r}
+weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
+```
+
+```{r}
+library(sfdep)
+
+# Calculo de  Moran's I Bivariado
+bivariate_moran <- sfdep::global_moran_bv(x = layer_municipios$ICE, 
+                                          y = layer_municipios$IM_2020,
+                                          nb = weights[["neighbours"]],
+                                          wt = weights[["weights"]]
+                                          
+                                          )
+summary(bivariate_moran)
+```
+
+
+## Lisa 
+
+```{r}
+library(sfdep)
+
+# Calculo de  Local Bivariate Moran's I 
+bivariate_LISA <- sfdep::local_moran_bv(x = layer_municipios$ICE, 
+                                          y = layer_municipios$IM_2020,
+                                          nb = weights[["neighbours"]],
+                                          wt = weights[["weights"]]
+                                          )
+```
+
+
+- **El valor de Moran Bivariado (0.43114) sugiere una autocorrelación espacial positiva entre ICE e IM_2020**: municipios con **Alta** calidad del entorno están rodeados de municipios con **Bajo** índice de marginación, y lo mismo ocurre para valores bajos.  
+- **El bootBias negativo sugiere que este valor puede estar sobreestimado**, aunque sigue siendo significativo.  
+- **El bajo error estándar (0.010527) indica que la estimación es confiable**.  
+  
+
+```{r}
+library(sf)
+library(sfdep)   # Para Moran Bivariado    # Para mapas
+library(dplyr)
+names(bivariate_LISA)
+# Se agregan los valores de LISA a la capa espacial
+capa_municipios <- layer_municipios %>%
+                     mutate(lisa_I = bivariate_LISA$Ib,  # Índice de Moran local
+                            p_value = bivariate_LISA$p_sim  # p-valor de la permutación
+                      ) %>%
+                      mutate(cluster = case_when( # Se define categorías de clusters espaciales
+                                                 lisa_I > 0 & p_value < 0.05 ~ "Cluster Alto-Alto (HH)",
+                                                 lisa_I < 0 & p_value < 0.05 ~ "Cluster Bajo-Bajo (LL)",
+                                                 lisa_I > 0 & p_value >= 0.05 ~ "No Significativo",
+                                                 lisa_I < 0 & p_value >= 0.05 ~ "No Significativo",
+                                                 TRUE ~ "No Significativo"
+                                              )) %>% 
+                        mutate(cluster = factor(.$cluster, 
+                                                 levels = c("Cluster Alto-Alto (HH)", "Cluster Bajo-Bajo (LL)", "Cluster Alto-Bajo (HH)", "Cluster Bajo-Alto (HH)", "No Significativo")))
+
+p <-  ggplot() +
+       layer_spatial(capa_municipios, aes(fill = cluster), color = "transparent") + 
+        layer_spatial(shape_estados, fill = "transparent", color = "black") + 
+         scale_fill_manual(values = c("#aa295c", "#95329c", "white")) +
+          theme_bw() + 
+           theme(plot.title = element_text(size = 20, hjust = 0, family = "montserrat", face = "bold"),
+                 plot.subtitle = element_text(size = 16, hjust = 0, family = "montserrat"),
+                 plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "montserrat"), 
+                 legend.key.size = unit(0.5, "cm"),
+                 legend.text = element_text(size = 9, family = "montserrat"), 
+                 legend.title = element_text(size = 10, hjust = 0.5, family = "montserrat", face = "bold"),
+                 legend.position = "right"
+                   ) + 
+            labs(title = "LISA: Local Moran's I", 
+                 subtitle = "Índice de marginación a nivel municipal, 2020",
+                 fill = "LISA Cluster",
+                 caption = expression(paste("Fuentes: Estimaciones del CONAPO con base en el INEGI, Censo de Población y Vivienda 2020")))
+
+p
+```
 
 ## Referencias 
 
