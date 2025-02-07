@@ -503,7 +503,7 @@ capa_municipios <- layer_municipios %>%
 p <-  ggplot() +
        layer_spatial(capa_municipios, aes(fill = cluster), color = "transparent") + 
         layer_spatial(shape_estados, fill = "transparent", color = "black") + 
-         scale_fill_manual(values = c("#aa295c", "#95329c", "white")) +
+         scale_fill_manual(values = c("#aa295c", "#c3c3c3", "white")) +
           theme_bw() + 
            theme(plot.title = element_text(size = 14, vjust = 0.5, hjust = 0, family = "montserrat", face = "bold"),
                  plot.subtitle = element_text(size = 12, vjust = 0, hjust = 0, family = "montserrat"),
