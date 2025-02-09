@@ -381,7 +381,7 @@ La base de datos del índice de calidad del entorno por localidades se encuentra
 
 
 ```{r, class.source = "fold-show"}
-data <- read_xlsx("Bases/Indice de calidad del entorno a nivel localidad.xlsx", sheet = "ICE_2020") %>%
+data <- read_xlsx(paste0(here::here(), "/Bases/Indice de calidad del entorno a nivel localidad.xlsx"), sheet = "ICE_2020") %>%
           mutate(CVE_GEO = CVE_LOC) %>%
            as.data.frame() %>% 
             filter(ICE >= 0)
@@ -574,7 +574,7 @@ p
 -   `X_nb_queen` almacena la lista de vecinos generada por `poly2nb()` usando la regla de la reina, con el parámetro `queen = TRUE`.
 -   Es un objeto de clase *nb* (neighborhood), que es una estructura que se utiliza para representar relaciones espaciales en análisis de datos espaciales
 
-```{r}
+```{r, eval = FALSE}
 # Construyendo lista de vecinos con criterio tipo reina
 X_nb_queen = poly2nb(layer_localicad, queen = TRUE)
 ```
@@ -582,7 +582,7 @@ X_nb_queen = poly2nb(layer_localicad, queen = TRUE)
 Dado que `layer_localidad_p` es un `SpatialPointsDataFrame`, la función `poly2nb()` no es adecuada, ya que esta función espera una capa de polígonos (`SpatialPolygonsDataFrame`). Para calcular distancias entre puntos en un `SpatialPointsDataFrame`, puedes usar la función `spDists()` de la librería **sp** o `st_distance()` de la librería **sf**.
  
  
-```{r}
+```{r, eval = FALSE}
 library(sp)
 # Se calcula la matriz de distancias geodésicas en kilómetros
 dist_matrix <- spDists(layer_localicad_p, longlat = TRUE) 
