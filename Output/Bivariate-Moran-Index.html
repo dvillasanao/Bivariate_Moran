@@ -2111,9 +2111,8 @@ de una variable están asociados con los valores de otra variable en
 ubicaciones vecinas.</p>
 <p>Para cada ubicación <span class="math inline">\(i\)</span>, el
 <strong>LISA Bivariado</strong> se calcula como:</p>
-<p><span class="math display">\[
-    I_B(i) = (X_i - \bar{X}) \sum_j w_{ij} (Y_j - \bar{Y})
-    \]</span></p>
+<p><span class="math display">\[I_B(i) = (X_i - \bar{X}) \sum_j w_{ij}
+(Y_j - \bar{Y})\]</span></p>
 <p>Donde:</p>
 <ul>
 <li><span class="math inline">\(X_i\)</span> es el valor de la variable
@@ -2196,9 +2195,8 @@ de una variable están asociados con valores altos (o bajos) de otra
 variable en áreas vecinas.</p>
 <hr />
 <p>La versión bivariada del Getis-Ord <span class="math inline">\(G^*\)</span> se define como:</p>
-<p><span class="math display">\[
-    G_{XY}^*(i) = \frac{\sum_{j} w_{ij} X_j Y_j}{\sum_j X_j Y_j}
-    \]</span></p>
+<p><span class="math display">\[G_{XY}^*(i) = \frac{\sum_{j} w_{ij} X_j
+Y_j}{\sum_j X_j Y_j}\]</span></p>
 <p>Donde:</p>
 <ul>
 <li><span class="math inline">\(X_j\)</span> y <span class="math inline">\(Y_j\)</span> son los valores de las variables
@@ -2676,6 +2674,40 @@ indicadores sociodemográficos y los resultados de LISA.</p>
 <span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>              <span class="at">file =</span> <span class="fu">paste0</span>(<span class="st">&quot;Output/clusters_municipal.xlsx&quot;</span>), </span>
 <span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>               <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
+<div id="bivariate-gearys-c_xy" class="section level2">
+<h2>Bivariate Geary’s <span class="math inline">\(C_{xy}\)</span></h2>
+<p><strong>Índice de Marginación</strong></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">require</span>(bispdep)</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>geary_bivariate <span class="ot">&lt;-</span> <span class="fu">geary.bi</span>(<span class="at">varX =</span> layer_municipios<span class="sc">$</span>ICE, </span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>                            <span class="at">varY =</span> layer_municipios<span class="sc">$</span>IM_2020,</span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>                            <span class="at">listw =</span> weights,</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>                            <span class="at">zero.policy =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>geary_bivariate</span></code></pre></div>
+<pre><code>## $C
+## [1] 139.7904
+## 
+## $Kx
+## [1] 31.65092
+## 
+## $Ky
+## [1] 7.847273</code></pre>
+</div>
+<div id="bivariate-gearys-cxy-test-for-spatial-autocorrelation" class="section level2">
+<h2>Bivariate Geary’s Cxy test for spatial autocorrelation</h2>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>geary_bivariate_test <span class="ot">&lt;-</span> <span class="fu">gearybi.test</span>(<span class="at">varX =</span> layer_municipios<span class="sc">$</span>ICE, </span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>                                     <span class="at">varY =</span> layer_municipios<span class="sc">$</span>IM_2020,</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>                                     <span class="at">listw =</span> weights,</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>                                    <span class="at">zero.policy =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a><span class="fu">summary</span>(geary_bivariate_test)</span></code></pre></div>
+<pre><code>##             Length Class  Mode     
+## statistic   1      -none- numeric  
+## p.value     1      -none- numeric  
+## estimate    3      -none- numeric  
+## alternative 1      -none- character
+## method      1      -none- character
+## data.name   1      -none- character</code></pre>
+</div>
 <div id="referencias" class="section level2">
 <h2>Referencias</h2>
 <p>Anselin, L. (1995). Local Indicators of Spatial Association—LISA.
@@ -2688,7 +2720,7 @@ Geographical Analysis, 27(2), 93–115.</p>
 <div id="librerías" class="section level2">
 <h2>Librerías</h2>
 <p><strong>Librerías que se usaron en el trabajo</strong></p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>sesion_info <span class="ot">&lt;-</span> devtools<span class="sc">::</span><span class="fu">session_info</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>sesion_info <span class="ot">&lt;-</span> devtools<span class="sc">::</span><span class="fu">session_info</span>()</span></code></pre></div>
 <table class=" lightable-classic" style="font-size: 10px; font-family: Montserrat; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2704,6 +2736,17 @@ source
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+bispdep
+</td>
+<td style="text-align:left;">
+1.0-1
+</td>
+<td style="text-align:left;">
+CRAN (R 4.3.3)
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 dplyr

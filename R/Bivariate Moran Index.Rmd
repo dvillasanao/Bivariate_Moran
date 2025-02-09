@@ -208,9 +208,7 @@ El **LISA Bivariado** (*Bivariate Local Moran’s I*) es una extensión del **Lo
 
 Para cada ubicación $i$, el **LISA Bivariado** se calcula como:
 
-$$
-    I_B(i) = (X_i - \bar{X}) \sum_j w_{ij} (Y_j - \bar{Y})
-    $$
+$$I_B(i) = (X_i - \bar{X}) \sum_j w_{ij} (Y_j - \bar{Y})$$
 
 Donde:
 
@@ -249,9 +247,7 @@ Este índice identifica **clústeres espaciales bivariados**, es decir, lugares 
 
 La versión bivariada del Getis-Ord $G^*$ se define como:
 
-$$
-    G_{XY}^*(i) = \frac{\sum_{j} w_{ij} X_j Y_j}{\sum_j X_j Y_j}
-    $$
+$$G_{XY}^*(i) = \frac{\sum_{j} w_{ij} X_j Y_j}{\sum_j X_j Y_j}$$
 
 Donde:
 
@@ -681,6 +677,29 @@ writeData(wb, 1, data, colNames = TRUE)
 saveWorkbook(wb, 
               file = paste0("Output/clusters_municipal.xlsx"), 
                overwrite = TRUE)
+```
+
+## Bivariate Geary's $C_{xy}$
+
+**Índice de Marginación** 
+
+```{r}
+require(bispdep)
+
+geary_bivariate <- geary.bi(varX = layer_municipios$ICE, 
+                            varY = layer_municipios$IM_2020,
+                            listw = weights,
+                            zero.policy = FALSE)
+geary_bivariate
+```
+## Bivariate Geary's Cxy test for spatial autocorrelation 
+
+```{r}
+geary_bivariate_test <- gearybi.test(varX = layer_municipios$ICE, 
+                                     varY = layer_municipios$IM_2020,
+                                     listw = weights,
+                                    zero.policy = FALSE)
+summary(geary_bivariate_test)
 ```
 
 

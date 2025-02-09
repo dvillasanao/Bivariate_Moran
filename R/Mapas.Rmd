@@ -411,6 +411,7 @@ layer_localicad_p <- spdplyr:::inner_join.Spatial(shape_localidad_p,
                                                   by = "CVE_GEO")
 
 table(layer_localicad@data$GACC)
+table(layer_localicad_p@data$GACC)
 ```
 
 
@@ -577,16 +578,60 @@ p
 ```{r, eval = FALSE}
 # Construyendo lista de vecinos con criterio tipo reina
 X_nb_queen = poly2nb(layer_localicad, queen = TRUE)
+X_nb_queen = poly2nb(layer_localicad, queen = TRUE)
 ```
 
-Dado que `layer_localidad_p` es un `SpatialPointsDataFrame`, la función `poly2nb()` no es adecuada, ya que esta función espera una capa de polígonos (`SpatialPolygonsDataFrame`). Para calcular distancias entre puntos en un `SpatialPointsDataFrame`, puedes usar la función `spDists()` de la librería **sp** o `st_distance()` de la librería **sf**.
- 
- 
-```{r, eval = FALSE}
+Dado que `layer_localidad_p` es un `SpatialPointsDataFrame`, la función `poly2nb()` no es adecuada, ya que esta función espera una capa de polígonos (`SpatialPolygonsDataFrame`). Para calcular distancias entre puntos en un `SpatialPointsDataFrame`, puedes usar la función `spDists()` de la librería **sp** o `st_distance()` de la librería **sf**. 
+
+```{r}
+library(sf)
 library(sp)
-# Se calcula la matriz de distancias geodésicas en kilómetros
-dist_matrix <- spDists(layer_localicad_p, longlat = TRUE) 
+library(rgdal)  # Si trabajas con formatos espaciales antiguos
+
+# Convertir SpatialPolygonsDataFrame y SpatialPointsDataFrame a sf
+polygons_sf <- st_as_sf(layer_localicad)  # SpatialPolygonsDataFrame
+points_sf <- st_as_sf(layer_localicad_p)     # SpatialPointsDataFrame
+
+## Nos quedamos con las columnas similares 
+columnas <- intersect(names(polygons_sf), names(points_sf)) 
+
+points_sf <- points_sf %>% 
+              select(intersect(names(polygons_sf), names(points_sf)))
+
+polygons_sf <- polygons_sf %>% 
+                select(intersect(names(polygons_sf), names(points_sf)))  
+# Unir ambos objetos
+layer_localidades_sf <- rbind(polygons_sf, points_sf)
+saveRDS(layer_localidades_sf, file = paste0(here::here(),"/Output/layer_localidades.RDS"))
 ```
+
+ 
+```{r}
+library(sp)
+library(rgeos)
+library(rgdal)
+
+# Nos quedamos con los indicadores que coindiciden 
+
+points_sf <- layer_localicad_p %>% 
+              select(intersect(names(layer_localicad), names(layer_localicad_p)))
+
+polygons_sf <- layer_localicad %>% 
+                select(intersect(names(layer_localicad), names(layer_localicad_p)))
+
+# Convertir puntos en polígonos (buffers de 100 metros alrededor de cada punto)
+buffers <- gBuffer(points_sf, byid = TRUE, width = 100)
+
+# Convertir a SpatialPolygonsDataFrame
+buffers_spdf <- SpatialPolygonsDataFrame(buffers, data = points_sf@data)
+
+# Unir los dos SpatialPolygonsDataFrame
+merged_spdf <- rbind(polygons_sf, buffers_spdf)
+
+
+saveRDS(merged_spdf, file = paste0(here::here(),"/Output/layer_localidades.RDS"))
+```
+
 Esto te devuelve una matriz donde cada celda `(i, j)` representa la distancia entre los puntos `i` y `j`.
 
 
