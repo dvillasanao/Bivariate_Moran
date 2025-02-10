@@ -572,14 +572,7 @@ p
 ![](Output/Mapa del índice de accesibilidad localidad.png){width="70%" fig-align="center"}
 ## LISA Bivariado (`Bivariate Local Moran’s I`)  
 
--   `X_nb_queen` almacena la lista de vecinos generada por `poly2nb()` usando la regla de la reina, con el parámetro `queen = TRUE`.
--   Es un objeto de clase *nb* (neighborhood), que es una estructura que se utiliza para representar relaciones espaciales en análisis de datos espaciales
 
-```{r, eval = FALSE}
-# Construyendo lista de vecinos con criterio tipo reina
-X_nb_queen = poly2nb(layer_localicad, queen = TRUE)
-X_nb_queen = poly2nb(layer_localicad, queen = TRUE)
-```
 
 Dado que `layer_localidad_p` es un `SpatialPointsDataFrame`, la función `poly2nb()` no es adecuada, ya que esta función espera una capa de polígonos (`SpatialPolygonsDataFrame`). Para calcular distancias entre puntos en un `SpatialPointsDataFrame`, puedes usar la función `spDists()` de la librería **sp** o `st_distance()` de la librería **sf**. 
 
@@ -628,8 +621,21 @@ buffers_spdf <- SpatialPolygonsDataFrame(buffers, data = points_sf@data)
 # Unir los dos SpatialPolygonsDataFrame
 merged_spdf <- rbind(polygons_sf, buffers_spdf)
 
+## Se quitan los valores vacios del ICE 
+merged_spdf <- merged_spdf %>% 
+               filter(ICE >= 0) %>% 
+                filter(IM_2020 >= 0)
 
 saveRDS(merged_spdf, file = paste0(here::here(),"/Output/layer_localidades.RDS"))
+```
+
+
+-   `X_nb_queen` almacena la lista de vecinos generada por `poly2nb()` usando la regla de la reina, con el parámetro `queen = TRUE`.
+-   Es un objeto de clase *nb* (neighborhood), que es una estructura que se utiliza para representar relaciones espaciales en análisis de datos espaciales
+
+```{r, eval = FALSE}
+# Construyendo lista de vecinos con criterio tipo reina
+X_nb_queen = poly2nb(merged_spdf, queen = TRUE)
 ```
 
 Esto te devuelve una matriz donde cada celda `(i, j)` representa la distancia entre los puntos `i` y `j`.
@@ -637,10 +643,25 @@ Esto te devuelve una matriz donde cada celda `(i, j)` representa la distancia en
 
 Se convierte la lista de vecinos `X_nb_queen` (creada previamente con `poly2nb()`) en una matriz de pesos espaciales, que se usará en cálculos como el índice de Moran, Geary o otros modelos espaciales.
 
-```{r, eval = FALSE}
-weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
-weights_p <- nb2listw(X_nb_queen_p, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
+```{r}
+library(sp)
+library(rgeos)
+
+# Calcular los centroides de los polígonos en merged_spdf
+centroids <- gCentroid(merged_spdf, byid = TRUE)
+
 ```
+
+
+```{r}
+
+#weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
+#coords = coordinates(merged_spdf)
+IDs = row.names(as(merged_spdf, "data.frame")) # Id de las filas
+X_kn4 = knn2nb(knearneigh(centroids, k = 5), row.names = IDs) 
+
+```
+
 
 Se categorizan las posibles combinaciones de las relaciones del Índice de Calidad del Entorno con los otros 3 indicadores:
 
@@ -653,22 +674,28 @@ Se categorizan las posibles combinaciones de las relaciones del Índice de Calid
 
 **Índice de marginación**   
 
+```{r}
+sum(is.na(merged_spdf$ICE))       # Cantidad de NA en ICE
+sum(is.na(merged_spdf$IM_2020))   # Cantidad de NA en IM_2020
+sum(is.infinite(merged_spdf$ICE)) # Cantidad de Inf/-Inf en ICE
+sum(is.infinite(merged_spdf$IM_2020)) # Cantidad de Inf/-Inf en IM_2020
+
+```
+
+
 
 ```{r, eval = FALSE}
 library(sfdep)
 
+#nb <- st_contiguity(merged_spdf, queen = TRUE, zero.policy = FALSE)
+#whts <- st_weights(X_kn4, style = "W")
+weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
 # Calculo de  Local Bivariate Moran's I 
-bivariate_LISA <- sfdep::local_moran_bv(x = layer_localicad$ICE, 
-                                        y = layer_localicad$IM_2020,
+bivariate_LISA <- sfdep::local_moran_bv(x = merged_spdf$ICE, 
+                                        y = merged_spdf$IM_2020,
                                         nb = weights[["neighbours"]],
                                         wt = weights[["weights"]]
-                                        )
-
-bivariate_LISA_p <- sfdep::local_moran_bv(x = layer_localicad_p$ICE, 
-                                          y = layer_localicad_p$IM_2020,
-                                          nb = weights[["neighbours"]],
-                                          wt = weights[["weights"]]
-                                          )
+)
 ```
 
 ## Librerías
