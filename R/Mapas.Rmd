@@ -658,8 +658,9 @@ centroids <- gCentroid(merged_spdf, byid = TRUE)
 #weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
 #coords = coordinates(merged_spdf)
 IDs = row.names(as(merged_spdf, "data.frame")) # Id de las filas
-X_kn4 = knn2nb(knearneigh(centroids, k = 5), row.names = IDs) 
+X_kn4 = knn2nb(knearneigh(centroids, k = 2), row.names = IDs) 
 
+saveRDS(X_kn4, file = paste0(here::here(), "/Output/Kneighbours.RDS"))
 ```
 
 
@@ -675,11 +676,12 @@ Se categorizan las posibles combinaciones de las relaciones del Índice de Calid
 **Índice de marginación**   
 
 ```{r}
+sum(is.null(merged_spdf$ICE))       # Cantidad de NA en ICE
+sum(is.null(merged_spdf$IM_2020))   # Cantidad de NA en IM_2020
 sum(is.na(merged_spdf$ICE))       # Cantidad de NA en ICE
 sum(is.na(merged_spdf$IM_2020))   # Cantidad de NA en IM_2020
 sum(is.infinite(merged_spdf$ICE)) # Cantidad de Inf/-Inf en ICE
 sum(is.infinite(merged_spdf$IM_2020)) # Cantidad de Inf/-Inf en IM_2020
-
 ```
 
 
@@ -689,11 +691,11 @@ library(sfdep)
 
 #nb <- st_contiguity(merged_spdf, queen = TRUE, zero.policy = FALSE)
 #whts <- st_weights(X_kn4, style = "W")
-weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
+weights <- nb2listw(X_kn4, style="W", zero.policy = FALSE)  # Se crea matriz de pesos
 # Calculo de  Local Bivariate Moran's I 
 bivariate_LISA <- sfdep::local_moran_bv(x = merged_spdf$ICE, 
                                         y = merged_spdf$IM_2020,
-                                        nb = weights[["neighbours"]],
+                                        nb = X_kn4,
                                         wt = weights[["weights"]]
 )
 ```

@@ -134,3 +134,76 @@ library(extrafont)
 # activar showtext
 windowsFonts()
 ```
+
+
+## Localidad 
+
+### Base de datos
+
+La base de datos del índice de calidad del entorno por localidades se encuentra disponible en la página oficial de [CONAPO](https://www.gob.mx/conapo/documentos/indice-de-calidad-del-entorno?idiom=es) o bien se puede consultar en la página de [Datos Abiertos](https://datos.gob.mx/) y se presenta en formato `.xlsx` [Consulta](http://www.conapo.gob.mx/work/models/CONAPO/Datos_Abiertos/DT/ICE_2020.zip).
+
+
+```{r, class.source = "fold-show"}
+data <- read_xlsx(paste0(here::here(), "/Bases/Indice de calidad del entorno a nivel localidad.xlsx"), sheet = "ICE_2020") %>%
+          mutate(CVE_GEO = CVE_LOC) %>%
+           as.data.frame() %>% 
+            filter(ICE >= 0)
+```
+
+### Sahpefiles  
+
+**Shapefile localidades (polígonos) 2020**
+
+```{r}
+shape_localidad <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
+                            layer = "00l",
+                             encoding = "UTF-8",
+                              use_iconv = TRUE)
+
+## Se filtra por AMBITO == "Urbana"
+shape_localidad <- shape_localidad %>%
+                    filter(AMBITO == "Urbana") %>%
+                     rename("CVE_GEO" = "CVEGEO")
+```
+
+**Shapefile localidades (puntos) 2020**
+
+```{r}
+shape_localidad_p <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
+                             layer = "00lpr",
+                             encoding = "UTF-8",
+                             use_iconv = TRUE)
+```
+
+
+#### SpatialPolygons   
+
+Se fusionan los datos del `shape_localidad` con datos estadísticos del índice de calidad del entorno a nivel localidad (`ICE`), excluyendo las claves estatales, municipales y localidad (`CVE_LOC`) y asegurando que `G_ICE` se ordene de acuerdo a los grados de calidad del entorno, de igual manera los grados de marginación (`GM_2020`), equipamiento (`G_IE`) y accesibilidad (`GACC`). El resultado es `layer_municipios`, un objeto que contiene a los municipios junto con sus atributos actualizados, lo que facilita su análisis y visualización en mapas.
+
+$$SpatialPolygons \Rightarrow SpatialPolygons + Datos$$
+
+```{r}
+layer_localicad <- spdplyr:::inner_join.Spatial(shape_localidad,
+                                                data %>% dplyr::select(c(-CVE_LOC)) %>%
+                                                               mutate(G_ICE = fct_relevel(.$G_ICE,"Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      GM_2020 = fct_relevel(.$GM_2020, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      G_IE = fct_relevel(.$G_IE, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      GACC = fct_relevel(.$GACC, "Muy alto (menos de 30 min)", "Alto (de 31 a 60 min)", "Medio (de 61 a 90 min)", "Bajo (de 91 a 120 min)", "Muy  bajo (más de 120 min)", "Sin localización en la red")),
+                                                  by = "CVE_GEO")
+```
+
+
+```{r}
+layer_localicad_p <- spdplyr:::inner_join.Spatial(shape_localidad_p,
+                                                  data %>% dplyr::select(c(-CVE_LOC)) %>%
+                                                               mutate(G_ICE = fct_relevel(.$G_ICE,"Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      GM_2020 = fct_relevel(.$GM_2020, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                      G_IE = fct_relevel(.$G_IE, "Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"),
+                                                                     GACC = fct_relevel(.$GACC, "Muy alto (menos de 30 min)", "Alto (de 31 a 60 min)", "Medio (de 61 a 90 min)", "Bajo (de 91 a 120 min)", "Muy  bajo (más de 120 min)", "Sin localización en la red")),
+                                                  by = "CVE_GEO")
+
+table(layer_localicad@data$GACC)
+table(layer_localicad_p@data$GACC)
+```
+
+
