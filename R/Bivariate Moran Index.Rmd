@@ -390,7 +390,10 @@ path = "Output/Mapa del ICE a nivel municipal.pdf"
 ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
-![](../Output/Mapa%20del%20ICE%20a%20nivel%20municipal.png){width="70%" fig-align="center"} \### Centroides
+![](../Output/Mapa%20del%20ICE%20a%20nivel%20municipal.png){width="70%" fig-align="center"} \   
+
+
+### Centroides
 
 La función `coordinates()` extrae las coordenadas de los centroides de los polígonos en $(x,y)$ de la base de datos espacial y la almacenamos en la variable `coords`, para su posterior uso en el código.
 
@@ -399,7 +402,9 @@ La función `coordinates()` extrae las coordenadas de los centroides de los pol�
 coords = coordinates(layer_municipios)
 ```
 
-## Moran's I Bivariado (Bivariate Moran's I)
+## Moran's I Bivariado (Bivariate Moran's I)   
+
+El objetivo general del Índice de Moran Bivariado Global es evaluar la correlación espacial entre dos variables en una región geográfica, considerando la relación entre los valores de una variable en una unidad espacial y los valores de otra variable en las unidades vecinas. En este caso, examina cómo la variable ICE en un municipio está correlacionada con la variable `IM_2020` (índice de marginación), `IE` (índice de equipamiento) e `IAL` (índice de accesibilidad), en sus municipios vecinos.   
 
 -   `X_nb_queen` almacena la lista de vecinos generada por `poly2nb()` usando la regla de la reina, con el parámetro `queen = TRUE`.
 -   Es un objeto de clase *nb* (neighborhood), que es una estructura que se utiliza para representar relaciones espaciales en análisis de datos espaciales.
@@ -423,6 +428,12 @@ Se convierte la lista de vecinos `X_nb_queen` (creada previamente con `poly2nb()
 weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
 ```
 
+Se calcula el Índice de Moran Bivariado Global utilizando la función `global_moran_bv()` de la librería `sfdep` en R.
+
+-   `nb = weights[["neighbours"]]`: Proporciona la estructura de vecindad espacial, es decir, qué municipios son vecinos entre sí.
+-   `wt = weights[["weights"]]`: Proporciona los pesos espaciales asociados a la estructura de vecindad.\
+
+
 **Índice de Marginación**
 
 ```{r}
@@ -433,7 +444,6 @@ bivariate_moran <- sfdep::global_moran_bv(x = layer_municipios$ICE,
                                           y = layer_municipios$IM_2020,
                                           nb = weights[["neighbours"]],
                                           wt = weights[["weights"]]
-                                          
                                           )
 summary(bivariate_moran)
 ```
@@ -442,8 +452,7 @@ summary(bivariate_moran)
 -   **El bootBias negativo sugiere que este valor puede estar sobreestimado**, aunque sigue siendo significativo.\
 -   **El bajo error estándar (0.010527) indica que la estimación es confiable**.
 
-
-**Índice de Equipamiento** 
+**Índice de Equipamiento**
 
 ```{r}
 # Calculo de  Moran's I Bivariado
@@ -456,8 +465,7 @@ bivariate_moran <- sfdep::global_moran_bv(x = layer_municipios$ICE,
 summary(bivariate_moran)
 ```
 
-
-**Índice de Accesibilidad** 
+**Índice de Accesibilidad**
 
 ```{r}
 # Calculo de  Moran's I Bivariado
@@ -470,7 +478,11 @@ bivariate_moran <- sfdep::global_moran_bv(x = layer_municipios$ICE,
 summary(bivariate_moran)
 ```
 
-## LISA Bivariado (`Bivariate Local Moran’s I`)
+## LISA Bivariado (`Bivariate Local Moran’s I`)  
+
+El objetivo del **Índice de Moran Bivariado Local** (Bivariate Local Moran’s I) es identificar y mapear relaciones espaciales locales entre dos variables en una región geográfica, evaluando si existe una correlación significativa en áreas específicas y detectando clusters espaciales.  
+
+- A diferencia del Índice de Moran Bivariado Global, que mide la relación espacial en toda la región de estudio, el Bivariate Local Moran’s I permite detectar zonas específicas donde esta relación es significativa.  
 
 Se categorizan las posibles combinaciones de las relaciones del Índice de Calidad del Entorno con los otros 3 indicadores:
 
@@ -479,7 +491,6 @@ Se categorizan las posibles combinaciones de las relaciones del Índice de Calid
 2.  Índice de equipamiento
 
 3.  Índice de accesibilidad
-
 
 **Índice de Marginación**
 
@@ -493,7 +504,6 @@ bivariate_LISA <- sfdep::local_moran_bv(x = layer_municipios$ICE,
                                         wt = weights[["weights"]]
                                         )
 ```
-
 
 ```{r, eval = FALSE}
 library(sf)
@@ -522,8 +532,6 @@ data <- data %>%
                 cluster_IM = capa_municipios@data$cluster)
 ```
 
-
-
 ```{r, fig.height=6, fig.width=8, eval = FALSE, class.source = "fold-hide", eval = FALSE}
 p <-  ggplot() +
        layer_spatial(capa_municipios, aes(fill = cluster), color = "transparent") + 
@@ -549,8 +557,32 @@ p
 #ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
-![](../Output/Mapa LISA Cluster_IM.png){width="70%" fig-align="center"}
+```{r, echo = FALSE}
+require(gt)
+tabla <- read.xlsx(xlsxFile = paste0("Output/clusters_municipal.xlsx")) %>% 
+          group_by(cluster_IM) %>% 
+           summarise(Municipios = n())
+tabla %>% 
+ gt() %>% 
+  tab_header(title = "LISA: Local Moran's I (Clusters)",
+             subtitle = md("Índice de Calidad del entorno, \n Índice de marginación a nivel municipal")) %>%
+   tab_options(heading.title.font.size = 14, 
+               heading.subtitle.font.size = 12,
+               table.font.names = "Century Gothic",
+               table.font.size = 10,
+               table.align = 'center',
+               data_row.padding = px(1)) %>%
+    tab_style(style = list(cell_text(align = "left",
+                                     weight = 'bold')),
+              locations = list(cells_title(groups = c("title")))) %>%
+    tab_style(style = list(cell_text(align = "left")),       
+              locations = list(cells_title(groups = c("subtitle")))) %>%
+    cols_label(cluster_IM = md("**Cluster**"),
+               Municipios = md("**Municipios**"))
+```
 
+
+![](../Output/Mapa%20LISA%20Cluster_IM.png){width="70%" fig-align="center"}
 
 **Índice de Equipamiento**
 
@@ -608,7 +640,31 @@ p
 #ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
-![](../Output/Mapa LISA Cluster_IE.png){width="80%" fig-align="center"}
+```{r, echo = FALSE}
+require(gt)
+tabla <- read.xlsx(xlsxFile = paste0("Output/clusters_municipal.xlsx")) %>% 
+          group_by(cluster_IE) %>% 
+           summarise(Municipios = n())
+tabla %>% 
+ gt() %>% 
+  tab_header(title = "LISA: Local Moran's I (Clusters)",
+             subtitle = md("Índice de Calidad del entorno, \n Índice de equipamiento a nivel municipal")) %>%
+   tab_options(heading.title.font.size = 14, 
+               heading.subtitle.font.size = 12,
+               table.font.names = "Century Gothic",
+               table.font.size = 10,
+               table.align = 'center',
+               data_row.padding = px(1)) %>%
+    tab_style(style = list(cell_text(align = "left",
+                                     weight = 'bold')),
+              locations = list(cells_title(groups = c("title")))) %>%
+    tab_style(style = list(cell_text(align = "left")),       
+              locations = list(cells_title(groups = c("subtitle")))) %>%
+    cols_label(cluster_IE = md("**Cluster**"),
+               Municipios = md("**Municipios**"))
+```
+
+![](../Output/Mapa%20LISA%20Cluster_IE.png){width="80%" fig-align="center"}
 
 **Índice de Accesibilidad**
 
@@ -665,11 +721,36 @@ p
 #ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
-![](../Output/Mapa LISA Cluster_IAL.png){width="70%" fig-align="center"}    
 
-Se guardan los resultados en el data.frame que contiene los indicadores sociodemográficos y los resultados de LISA.  
+```{r, echo = FALSE}
+require(gt)
+tabla <- read.xlsx(xlsxFile = paste0("Output/clusters_municipal.xlsx")) %>% 
+          group_by(cluster_IAL) %>% 
+           summarise(Municipios = n())
+tabla %>% 
+ gt() %>% 
+  tab_header(title = "LISA: Local Moran's I (Clusters)",
+             subtitle = md("Índice de Calidad del entorno, \n Índice de Accesibilidad a nivel municipal")) %>%
+   tab_options(heading.title.font.size = 14, 
+               heading.subtitle.font.size = 12,
+               table.font.names = "Century Gothic",
+               table.font.size = 10,
+               table.align = 'center',
+               data_row.padding = px(1)) %>%
+    tab_style(style = list(cell_text(align = "left",
+                                     weight = 'bold')),
+              locations = list(cells_title(groups = c("title")))) %>%
+    tab_style(style = list(cell_text(align = "left")),       
+              locations = list(cells_title(groups = c("subtitle")))) %>%
+    cols_label(cluster_IAL = md("**Cluster**"),
+               Municipios = md("**Municipios**"))
+```
 
-```{r}
+![](../Output/Mapa%20LISA%20Cluster_IAL.png){width="70%" fig-align="center"}
+
+Se guardan los resultados en el data.frame que contiene los indicadores sociodemográficos y los resultados de LISA.
+
+```{r, eval = FALSE}
 require(openxlsx)
 wb <- createWorkbook()
 addWorksheet(wb, "clusters")
@@ -679,9 +760,27 @@ saveWorkbook(wb,
                overwrite = TRUE)
 ```
 
-## Bivariate Geary's $C_{xy}$
+## Bivariate Geary's $C_{xy}$  
 
-**Índice de Marginación** 
+El **Índice de Geary Bivariado (Bivariate Geary’s C)** tiene como objetivo **evaluar la relación espacial entre dos variables en una región geográfica**, pero enfatizando la similitud en valores entre áreas vecinas en lugar de la correlación global.  
+
+A diferencia del **Índice de Moran Bivariado**, que mide la autocorrelación espacial en términos de covarianza, **Geary’s C se enfoca en las diferencias locales entre valores vecinos**, lo que lo hace más sensible a cambios abruptos y discontinuidades en la distribución espacial.  
+
+ 
+### **Diferencia con otros índices espaciales**  
+  
+  | Característica            | Bivariate Moran’s I | Bivariate Geary’s C |
+  |--------------------------|---------------------|---------------------|
+  | Análisis                | Covarianza global   | Diferencias locales |
+  | Sensibilidad a cambios bruscos | Baja (patrones globales) | Alta (transiciones locales) |
+  | Valores cercanos a 0     | No hay correlación espacial | Alta similitud entre vecinos |
+  | Valores cercanos a 1     | No hay correlación espacial | Patrón espacial aleatorio |
+  | Valores mayores a 1      | Pocas agrupaciones espaciales | Alta variabilidad entre vecinos |
+
+
+Se calcula el Índice de Geary Bivariado (Bivariate Geary’s C) utilizando la función `geary.bi()`. Esta función se enfoca en evaluar similitudes o discontinuidades locales entre ambas variables.   
+
+**Índice de Marginación**
 
 ```{r}
 require(bispdep)
@@ -692,15 +791,36 @@ geary_bivariate <- geary.bi(varX = layer_municipios$ICE,
                             zero.policy = FALSE)
 geary_bivariate
 ```
-## Bivariate Geary's Cxy test for spatial autocorrelation 
+- **El valor alto de Geary’s C (139.79)** indica que hay **discontinuidades y contrastes espaciales** en la relación entre la **calidad del entorno (ICE) y la marginación (IM_2020)**.  
+- **Los valores de kurtosis altos (Kx y Ky)** refuerzan la idea de que algunas áreas tienen valores **muy distintos a los de sus vecinos**, lo que sugiere la presencia de **zonas con fuertes contrastes socioeconómicos**.  
+- Esto podría implicar que **existen áreas bien diferenciadas en términos de calidad del entorno y marginación**, lo que es relevante para la **planificación territorial y políticas públicas**.  
+
+
+## Bivariate Geary's $C_{xy}$ test   
+
+La función `gearybi.test()` **no solo calcula el Índice de Geary Bivariado (C), sino que también lo somete a una prueba de hipótesis mediante permutaciones aleatorias** para evaluar si la relación espacial observada es estadísticamente significativa.  
+
+#### **Prueba de hipótesis en `gearybi.test()`**:  
+
+- **Hipótesis nula ($H_{₀}$)**: No hay una relación espacial significativa entre `ICE` e `IM_2020`, es decir, la distribución espacial es aleatoria.  
+- **Hipótesis alternativa ($H_{1}$)**: Hay una relación espacial significativa entre `ICE` e `IM_2020`, lo que indica patrones espaciales no aleatorios.  
+
+Si el valor **p < 0.05**, podemos rechazar $H_{₀}$ y concluir que existe una relación espacial significativa entre las dos variables.  
+
 
 ```{r}
 geary_bivariate_test <- gearybi.test(varX = layer_municipios$ICE, 
                                      varY = layer_municipios$IM_2020,
                                      listw = weights,
                                     zero.policy = FALSE)
-summary(geary_bivariate_test)
+geary_bivariate_test
 ```
+
+ - El **Índice de Geary Bivariado (`C = 139.79`)** sugiere **fuertes discontinuidades espaciales** entre `ICE` e `IM_2020`.  
+- Sin embargo, **el p-valor de 1 indica que estas diferencias podrían ser producto del azar**, por lo que **no hay evidencia estadísticamente significativa** de una estructura espacial en la relación entre ambas variables.  
+- **Posible causa**:  
+  - La configuración de la matriz de pesos espaciales (`weights`) podría estar afectando los resultados.  
+- Los datos podrían no tener una relación espacial clara, o la prueba podría no ser adecuada para este tipo de distribución.  
 
 
 ## Referencias
