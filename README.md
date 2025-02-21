@@ -15,6 +15,12 @@ clave:
 El objetivo es identificar patrones espaciales y relaciones entre estos
 indicadores a nivel municipal mediante técnicas de estadística espacial.
 
+<div style="display: flex; justify-content: center;">
+
+<img src="Output/Mapa LISA Cluster_IE.png" width="55%" style="margin: 1px;">
+
+</div>
+
 ## Contenido del repositorio
 
 - **`Bases/`**: Datos geoespaciales y tabulares utilizados en el
