@@ -45,6 +45,8 @@ los indicadores.
 
 **Enlace**:
 <https://dvillasanao.github.io/Correlaciones_espaciales/Output/Correlaciones-a-nivel-municipal.html>
+**Enlace Mapas**:
+<https://dvillasanao.github.io/Correlaciones_espaciales/Output/Mapas.html>
 
 ## Requisitos
 
