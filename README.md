@@ -41,6 +41,11 @@ Permite identificar clusters espaciales de alta o baja correlación entre
 Mide la heterogeneidad espacial y discontinuidades en la distribución de
 los indicadores.
 
+## Enlace
+
+**Enlace**:
+<https://dvillasanao.github.io/Correlaciones_espaciales/Output/Correlaciones-a-nivel-municipal.html>
+
 ## Requisitos
 
 Para ejecutar el análisis es necesario contar con **R** y las siguientes

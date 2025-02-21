@@ -161,13 +161,23 @@ El ICE es una herramienta útil para:
 -  **Disponibilidad de información:** La disponibilidad de información para calcular el ICE puede ser limitada en algunas zonas.
 -  **Complejidad del fenómeno:** La calidad del entorno es un fenómeno complejo que no puede ser abarcado en su totalidad por un solo indicador.
  
- 
+## Shapefiles  
+
+### .shp
+
+La función `readOGR` del paquete `rgdal`, extrae automáticamente la información utilizada por otros paquetes `SIG` de código abierto como QGIS y permite a `R` manejar una gama más amplia de formatos de datos espaciales. Esta función lee datos `OGR` y datos vectoriales, pero solamente permite manejar capas con características geométricas (no mezcla puntos, líneas o polígonos en una sola capa) y a su vez establecerá un sistema de referencia espacial si la capa tiene dichos metadatos.\
+Para leer un archivo `shapefile`, se establecen los siguientes argumentos, como `dsn`, en donde se indica el directorio que contiene los shapes y `layer` que es el nombre explícito de la capa a trabajar y dichas capas deben de ir sin la extensión `.shp`.  
+
+A continuación se lee el archivo `.shp` que contiene de manera integrada la división de el área geoestadística estatal `agee`.
+
 ```{r,results=FALSE,class.source = "fold-show"}
 shape_estados <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
                              layer = "00ent",
                               encoding = "UTF-8",
                                use_iconv = TRUE)
-```
+``` 
+
+Se lee el archivo .shp que contiene de manera integrada la división de el área geoestadística municipal `agem`
 
 ```{r,results=FALSE,class.source = "fold-show"}
 shape_municipios <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
@@ -176,7 +186,11 @@ shape_municipios <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos",
                                use_iconv = TRUE)
 ```
 
-**Shapefile localidades (polígonos) 2020**
+**Shapefile localidades (polígonos) 2020** 
+
+La función `rename()` del paquete `dplyr` permite cambiar el nombre de la columna de la clave geoestadística a nivel localidad dentro de la base de datos del shape. 
+
+A continuación se lee el archivo .shp que contiene de manera integrada la división de el área geoestadística por localidad.
 
 ```{r}
 shape_localidad <- readOGR(dsn ="D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
@@ -261,7 +275,7 @@ p
 #ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
-![](Output/Mapa del ICE a nivel municipal.png){width="70%" fig-align="center"}
+![](../Output/Mapa del ICE a nivel municipal.png){width="70%" fig-align="center"}
 
 **Índice de Marginación 2020**  
 
@@ -299,7 +313,7 @@ p
 #ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
-![](Output/Mapa del índice de marginación municipal.png){width="70%" fig-align="center"}
+![](../Output/Mapa del índice de marginación municipal.png){width="70%" fig-align="center"}
 
 **Índice de Equipamiento**  
 
@@ -333,7 +347,7 @@ p
 #ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
-![](Output/Mapa del índice de equipamiento municipal.png){width="70%" fig-align="center"}
+![](../Output/Mapa del índice de equipamiento municipal.png){width="70%" fig-align="center"}
 
 **Índice de Accesibilidad**  
 
@@ -370,7 +384,7 @@ p
 ```
 
 
-![](Output/Mapa del índice de accesibilidad.png){width="70%" fig-align="center"}
+![](../Output/Mapa del índice de accesibilidad.png){width="70%" fig-align="center"}
 
 
 ## Localidad 
@@ -453,7 +467,7 @@ p
 ```
 
 
-![](Output/Mapa del ICE a nivel localidad.png){width="70%" fig-align="center"}
+![](../Output/Mapa del ICE a nivel localidad.png){width="70%" fig-align="center"}
 
 **Índice de Marginación 2020**  
 
@@ -493,7 +507,7 @@ p
 #ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
-![](Output/Mapa del índice de marginación localidad.png){width="70%" fig-align="center"}
+![](../Output/Mapa del índice de marginación localidad.png){width="70%" fig-align="center"}
 
 **Índice de Equipamiento**  
 
@@ -529,7 +543,7 @@ path = "Output/Mapa del índice de equipamiento localidad.pdf"
 ggexport(p, filename = path ,width = 10, height = 10, device = "cairo")
 ```
 
-![](Output/Mapa del índice de equipamiento localidad.png){width="70%" fig-align="center"}
+![](../Output/Mapa del índice de equipamiento localidad.png){width="70%" fig-align="center"}
 
 
 **Índice de Accesibilidad**  
@@ -569,136 +583,7 @@ p
 ```
 
 
-![](Output/Mapa del índice de accesibilidad localidad.png){width="70%" fig-align="center"}
-## LISA Bivariado (`Bivariate Local Moran’s I`)  
-
-
-
-Dado que `layer_localidad_p` es un `SpatialPointsDataFrame`, la función `poly2nb()` no es adecuada, ya que esta función espera una capa de polígonos (`SpatialPolygonsDataFrame`). Para calcular distancias entre puntos en un `SpatialPointsDataFrame`, puedes usar la función `spDists()` de la librería **sp** o `st_distance()` de la librería **sf**. 
-
-```{r}
-library(sf)
-library(sp)
-library(rgdal)  # Si trabajas con formatos espaciales antiguos
-
-# Convertir SpatialPolygonsDataFrame y SpatialPointsDataFrame a sf
-polygons_sf <- st_as_sf(layer_localicad)  # SpatialPolygonsDataFrame
-points_sf <- st_as_sf(layer_localicad_p)     # SpatialPointsDataFrame
-
-## Nos quedamos con las columnas similares 
-columnas <- intersect(names(polygons_sf), names(points_sf)) 
-
-points_sf <- points_sf %>% 
-              select(intersect(names(polygons_sf), names(points_sf)))
-
-polygons_sf <- polygons_sf %>% 
-                select(intersect(names(polygons_sf), names(points_sf)))  
-# Unir ambos objetos
-layer_localidades_sf <- rbind(polygons_sf, points_sf)
-saveRDS(layer_localidades_sf, file = paste0(here::here(),"/Output/layer_localidades.RDS"))
-```
-
- 
-```{r}
-library(sp)
-library(rgeos)
-library(rgdal)
-
-# Nos quedamos con los indicadores que coindiciden 
-
-points_sf <- layer_localicad_p %>% 
-              select(intersect(names(layer_localicad), names(layer_localicad_p)))
-
-polygons_sf <- layer_localicad %>% 
-                select(intersect(names(layer_localicad), names(layer_localicad_p)))
-
-# Convertir puntos en polígonos (buffers de 100 metros alrededor de cada punto)
-buffers <- gBuffer(points_sf, byid = TRUE, width = 100)
-
-# Convertir a SpatialPolygonsDataFrame
-buffers_spdf <- SpatialPolygonsDataFrame(buffers, data = points_sf@data)
-
-# Unir los dos SpatialPolygonsDataFrame
-merged_spdf <- rbind(polygons_sf, buffers_spdf)
-
-## Se quitan los valores vacios del ICE 
-merged_spdf <- merged_spdf %>% 
-               filter(ICE >= 0) %>% 
-                filter(IM_2020 >= 0)
-
-saveRDS(merged_spdf, file = paste0(here::here(),"/Output/layer_localidades.RDS"))
-```
-
-
--   `X_nb_queen` almacena la lista de vecinos generada por `poly2nb()` usando la regla de la reina, con el parámetro `queen = TRUE`.
--   Es un objeto de clase *nb* (neighborhood), que es una estructura que se utiliza para representar relaciones espaciales en análisis de datos espaciales
-
-```{r, eval = FALSE}
-# Construyendo lista de vecinos con criterio tipo reina
-X_nb_queen = poly2nb(merged_spdf, queen = TRUE)
-```
-
-Esto te devuelve una matriz donde cada celda `(i, j)` representa la distancia entre los puntos `i` y `j`.
-
-
-Se convierte la lista de vecinos `X_nb_queen` (creada previamente con `poly2nb()`) en una matriz de pesos espaciales, que se usará en cálculos como el índice de Moran, Geary o otros modelos espaciales.
-
-```{r}
-library(sp)
-library(rgeos)
-
-# Calcular los centroides de los polígonos en merged_spdf
-centroids <- gCentroid(merged_spdf, byid = TRUE)
-
-```
-
-
-```{r}
-
-#weights <- nb2listw(X_nb_queen, style="W", zero.policy = TRUE)  # Se crea matriz de pesos
-#coords = coordinates(merged_spdf)
-IDs = row.names(as(merged_spdf, "data.frame")) # Id de las filas
-X_kn4 = knn2nb(knearneigh(centroids, k = 2), row.names = IDs) 
-
-saveRDS(X_kn4, file = paste0(here::here(), "/Output/Kneighbours.RDS"))
-```
-
-
-Se categorizan las posibles combinaciones de las relaciones del Índice de Calidad del Entorno con los otros 3 indicadores:
-
-1.  Índice de marginación
-
-2.  Índice de equipamiento
-
-3.  Índice de accesibilidad   
-
-
-**Índice de marginación**   
-
-```{r}
-sum(is.null(merged_spdf$ICE))       # Cantidad de NA en ICE
-sum(is.null(merged_spdf$IM_2020))   # Cantidad de NA en IM_2020
-sum(is.na(merged_spdf$ICE))       # Cantidad de NA en ICE
-sum(is.na(merged_spdf$IM_2020))   # Cantidad de NA en IM_2020
-sum(is.infinite(merged_spdf$ICE)) # Cantidad de Inf/-Inf en ICE
-sum(is.infinite(merged_spdf$IM_2020)) # Cantidad de Inf/-Inf en IM_2020
-```
-
-
-
-```{r, eval = FALSE}
-library(sfdep)
-
-#nb <- st_contiguity(merged_spdf, queen = TRUE, zero.policy = FALSE)
-#whts <- st_weights(X_kn4, style = "W")
-weights <- nb2listw(X_kn4, style="W", zero.policy = FALSE)  # Se crea matriz de pesos
-# Calculo de  Local Bivariate Moran's I 
-bivariate_LISA <- sfdep::local_moran_bv(x = merged_spdf$ICE, 
-                                        y = merged_spdf$IM_2020,
-                                        nb = X_kn4,
-                                        wt = weights[["weights"]]
-)
-```
+![](../Output/Mapa del índice de accesibilidad localidad.png){width="70%" fig-align="center"}
 
 ## Librerías
 
