@@ -44,9 +44,9 @@ los indicadores.
 ## Enlace
 
 **Enlace**:
-<https://dvillasanao.github.io/Correlaciones_espaciales/Output/Correlaciones-a-nivel-municipal.html>
+<https://dvillasanao.github.io/Bivariate_Moran/Output/Bivariate-Moran-Index.html>  
 **Enlace Mapas**:
-<https://dvillasanao.github.io/Correlaciones_espaciales/Output/Mapas.html>
+<https://dvillasanao.github.io/Bivariate_Moran/Output/Mapas.html>
 
 ## Requisitos
 
