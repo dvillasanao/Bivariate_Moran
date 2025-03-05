@@ -17,7 +17,7 @@ indicadores a nivel municipal mediante técnicas de estadística espacial.
 
 <div style="display: flex; justify-content: center;">
 
-<img src="Output/Mapa LISA Cluster_IE.png" width="55%" style="margin: 1px;">
+<img src="Output/Mapa LISA Cluster_IE.png" width="75%" style="margin: 1px;">
 
 </div>
 
